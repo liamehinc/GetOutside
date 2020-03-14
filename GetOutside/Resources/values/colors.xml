@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2c3e50</color>
+    <color name="colorPrimaryDark">#1B3147</color>
+    <color name="colorAccent">#0f75bc</color>
+
+  <!--<color name="springGreen">#00cd66</color>-->
+  <color name="springGreen">#0fad66</color>
+  <color name="darkGreen">#006400</color>
+  <color name="outsideLeafGreen">#9cae72</color>
+  <color name="outsideBrown">#64321b</color>
+  <color name="outsideTreeBrown">#ab6a0d</color>
+  <color name="mapleLeafRed">#cb1704</color>
+  <color name="goldenRod">#ffb90f</color>
+  <color name="aspenYellow">#f1a301</color>
+  <color name="pumpkinOrange">#d65d1a</color>
+  <color name="outsideSkyBlue">#0f75bc</color>
+  <color name="navyBlue">#000080</color>
+</resources>

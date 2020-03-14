@@ -1,0 +1,113 @@
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/relativeLayout1"
+    android:background="@drawable/GetOutsideBackground">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Current Outside Time"
+        android:textSize="30dp"
+        android:gravity="center"
+        android:id="@+id/currentActivityTextView"
+        android:textColor="@color/outsideBrown"
+        android:layout_marginTop="90dp"
+    />
+    <Chronometer
+        android:text="Outside Time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minWidth="25dp"
+        android:minHeight="25dp"
+        android:id="@+id/currentActivityChronometer"
+        android:layout_below="@id/currentActivityTextView"
+        android:gravity="center_horizontal"
+        android:textSize="30dp"
+        android:textColor="@color/outsideBrown"
+        android:backgroundTint="@color/springGreen"
+    />
+    <!--<TimePicker
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/previousOutsideHoursTimePicker"
+        android:timePickerMode="spinner"
+        android:layout_above="@+id/viewOutsideHoursButton"
+        
+    />-->
+    <Button
+        android:text="Start Activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/startActivityButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_above="@id/viewOutsideHoursButton"
+        android:textColor="@color/outsideBrown"
+        android:backgroundTint="@color/springGreen"
+        />
+    <Button
+        android:text="Resume Activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/resumeActivityButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_above="@id/stopActivityButton"
+        android:textColor="@color/outsideBrown"
+        android:backgroundTint="@color/aspenYellow"
+        />
+    <Button
+        android:text="Pause Activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pauseActivityButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_above="@id/stopActivityButton"
+        android:textColor="@color/outsideBrown"
+        android:backgroundTint="@color/goldenRod"
+        />
+    <Button
+        android:text="Stop Activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/stopActivityButton"
+        android:layout_gravity="left"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        android:textColor="@color/outsideBrown"
+        android:backgroundTint="@color/mapleLeafRed"
+        />
+    <Button
+        android:text="Show Total Outside Hours"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/viewOutsideHoursButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/outsideBrown"
+        android:backgroundTint="@color/springGreen"
+        android:layout_marginBottom="50dp"
+        />
+    <!--<Button
+        android:text="Add Previous Outside Hours"
+        android:textColor="@color/outsideBrown"
+        android:backgroundTint="@color/springGreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/recordHoursButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_above="@id/navigation"
+    />-->
+   <!-- bottom navigation
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="0dp"
+        android:layout_marginStart="0dp"
+        android:background="?android:attr/windowBackground"
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/navigation" />-->
+</RelativeLayout >
