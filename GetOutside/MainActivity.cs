@@ -49,13 +49,12 @@ namespace GetOutside
 
         private void LinkEventHandlers()
         {
-            //_recordHoursButton.Click += _recordHoursButton_Click;
             _startActivityButton.Click += _startActivityButton_Click;
             _resumeActivityButton.Click += _resumeActivityButton_Click;
             _pauseActivityButton.Click += _pauseActivityButton_Click;
             _stopActivityButton.Click += _stopActivityButton_Click;
             _viewOutsideHoursButton.Click += _viewOutsideHoursButton_Click;
-        }
+       }
 
         private void _viewOutsideHoursButton_Click(object sender, EventArgs e)
         {
@@ -112,9 +111,6 @@ namespace GetOutside
             _resumeActivityButton.Visibility = ViewStates.Invisible;
             _stopActivityButton.Visibility = ViewStates.Invisible;
 
-            // Leave these invisible until they are implemented.
-            //_previousOutsideHoursTimePicker.Visibility = ViewStates.Invisible;
-            //_recordHoursButton.Visibility = ViewStates.Invisible;
         }
 
         private void _pauseActivityButton_Click(object sender, EventArgs e)
@@ -211,25 +207,6 @@ namespace GetOutside
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-        //Bottom navigation item selected
-        //public bool OnNavigationItemSelected(IMenuItem item)
-        //{
-        //    switch (item.ItemId)
-        //    {
-        //        case Resource.Id.navigation_home:
-        //            Intent mainActivityIntent = new Intent(this, typeof(MainActivity));
-        //            StartActivity(mainActivityIntent);
-        //            return true;
-        //        case Resource.Id.navigation_dashboard:
-        //            Intent viewDashboardIntent = new Intent(this, typeof(ViewDashboardActivity));
-        //            StartActivity(viewDashboardIntent);
-        //            return true;
-        //        case Resource.Id.navigation_notifications:
-        //            textMessage.SetText(Resource.String.title_notifications);
-        //            return true;
-        //    }
-        //    return false;
-        //}
     }
 }
 

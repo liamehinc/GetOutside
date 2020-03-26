@@ -30,14 +30,7 @@
         android:textColor="@color/outsideBrown"
         android:backgroundTint="@color/springGreen"
     />
-    <!--<TimePicker
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/previousOutsideHoursTimePicker"
-        android:timePickerMode="spinner"
-        android:layout_above="@+id/viewOutsideHoursButton"
-        
-    />-->
+
     <Button
         android:text="Start Activity"
         android:layout_width="match_parent"
@@ -90,24 +83,4 @@
         android:backgroundTint="@color/springGreen"
         android:layout_marginBottom="50dp"
         />
-    <!--<Button
-        android:text="Add Previous Outside Hours"
-        android:textColor="@color/outsideBrown"
-        android:backgroundTint="@color/springGreen"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/recordHoursButton"
-        android:layout_gravity="center_horizontal"
-        android:layout_above="@id/navigation"
-    />-->
-   <!-- bottom navigation
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/navigation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="0dp"
-        android:layout_marginStart="0dp"
-        android:background="?android:attr/windowBackground"
-        android:layout_alignParentBottom="true"
-        app:menu="@menu/navigation" />-->
 </RelativeLayout >
