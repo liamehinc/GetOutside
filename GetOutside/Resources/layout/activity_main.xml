@@ -42,12 +42,32 @@
         android:backgroundTint="@color/springGreen"
         />
     <Button
+        android:text="Add Previous Activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/addActivityButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_above="@id/pauseActivityButton"
+        android:textColor="@color/outsideBrown"
+        android:backgroundTint="@color/aspenYellow"
+        />
+    <Button
+        android:text="Discard Activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/discardActivityButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_above="@id/pauseActivityButton"
+        android:textColor="@color/outsideBrown"
+        android:backgroundTint="@color/aspenYellow"
+        />
+    <Button
         android:text="Resume Activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/resumeActivityButton"
         android:layout_gravity="center_horizontal"
-        android:layout_above="@id/stopActivityButton"
+        android:layout_above="@id/saveActivityButton"
         android:textColor="@color/outsideBrown"
         android:backgroundTint="@color/aspenYellow"
         />
@@ -57,15 +77,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/pauseActivityButton"
         android:layout_gravity="center_horizontal"
-        android:layout_above="@id/stopActivityButton"
+        android:layout_above="@id/saveActivityButton"
         android:textColor="@color/outsideBrown"
-        android:backgroundTint="@color/goldenRod"
+        android:backgroundTint="@color/aspenYellow"
         />
     <Button
-        android:text="Stop Activity"
+        android:text="Save Activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/stopActivityButton"
+        android:id="@+id/saveActivityButton"
         android:layout_gravity="left"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="50dp"

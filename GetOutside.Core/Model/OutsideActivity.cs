@@ -5,11 +5,12 @@ using System.Text;
 
 namespace GetOutside.Core.Model
 {
-    public class OutsideActivity
+    public class outsideActivity
     {
         [PrimaryKey, AutoIncrement]
         public int OutsideActivityId { get; set; }
         public string Name { get; set; }
+        public string YearMonth { get; set; }
         //public int Hours { get; set; }
         //public int Minutes { get; set; }
         public DateTime StartTime { get; set; }
@@ -20,5 +21,6 @@ namespace GetOutside.Core.Model
         public int UserId { get; set; }
         public string Notes { get; set; }
         public bool Done { get; set; }
+
     }
 }

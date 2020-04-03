@@ -4,13 +4,10 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
-using SQLite;
 using System;
-using GetOutside;
 
 namespace GetOutside
 {
@@ -20,16 +17,17 @@ namespace GetOutside
         TextView textMessage;
         private Button _startActivityButton;
         private Button _resumeActivityButton;
-        private Button _stopActivityButton;
+        private Button _discardActivityButton;
+        private Button _saveActivityButton;
         private Button _pauseActivityButton;
+        private Button _addActivityButton;
         private Button _viewOutsideHoursButton;
         private Chronometer _currentActivityChronometer;
         private TextView _currentActivityTextView;
         public SqliteDataService _dataService = new SqliteDataService();
         //private Button _recordHoursButton;
-        //private TimePicker _previousOutsideHoursTimePicker;
 
-        private OutsideActivity _currentOutsideActivity = new OutsideActivity();
+        private outsideActivity _currentOutsideActivity = new outsideActivity();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -38,13 +36,12 @@ namespace GetOutside
             SetContentView(Resource.Layout.activity_main);
 
             textMessage = FindViewById<TextView>(Resource.Id.message);
-            //BottomNavigationView navigation = FindViewById<BottomNavigationView>(Resource.Id.navigation);
-            //navigation.SetOnNavigationItemSelectedListener(this);
 
             _dataService.Initialize();
 
             FindViews();
             LinkEventHandlers();
+            SetStopButtonView();
         }
 
         private void LinkEventHandlers()
@@ -52,17 +49,44 @@ namespace GetOutside
             _startActivityButton.Click += _startActivityButton_Click;
             _resumeActivityButton.Click += _resumeActivityButton_Click;
             _pauseActivityButton.Click += _pauseActivityButton_Click;
-            _stopActivityButton.Click += _stopActivityButton_Click;
+            _saveActivityButton.Click += _saveActivityButton_Click;
+            _addActivityButton.Click += _addActivityButton_Click;
             _viewOutsideHoursButton.Click += _viewOutsideHoursButton_Click;
+            _discardActivityButton.Click += _discardActivityButton_Click;
        }
+
+        private void _discardActivityButton_Click(object sender, EventArgs e)
+        {
+            _currentActivityChronometer.Stop();
+            _currentActivityChronometer.Base = SystemClock.ElapsedRealtime();
+            _dataService.DeleteOutsideActivity(_currentOutsideActivity);
+
+            SetDiscardButtonView();
+        }
 
         private void _viewOutsideHoursButton_Click(object sender, EventArgs e)
         {
-            SetShowTotalHoursButtonView();
+            //SetShowTotalHoursButtonView();
+            try
+            {
+                TimeSpan outsideHours = _dataService.GetOutsideHours();
+                if(outsideHours.TotalMilliseconds > 0)
+                {
+                    _currentActivityChronometer.Base = SystemClock.ElapsedRealtime() - (long)outsideHours.TotalMilliseconds; //SystemClock.ElapsedRealtime();
 
-            TimeSpan outsideHours = _dataService.GetOutsideHours();
-            _currentActivityChronometer.Base = SystemClock.ElapsedRealtime() - (long)outsideHours.TotalMilliseconds; //SystemClock.ElapsedRealtime();
-           //Toast.MakeText(Application.Context, "Total outside hours: " + string.Format("{0:hh\\:mm\\:ss}", outsideHours), ToastLength.Short).Show();
+                    Intent intent = new Intent(this, typeof(outsideActivityActivity));
+                    StartActivity(intent);
+                    //Toast.MakeText(Application.Context, "Total outside hours: " + string.Format("{0:hh\\:mm\\:ss}", outsideHours), ToastLength.Short).Show();
+                }
+                else
+                {
+                    Toast.MakeText(Application.Context, "You can either create a new activity or enter previous activities", ToastLength.Short).Show();
+                }
+            }
+            catch
+            {
+                Toast.MakeText(Application.Context, "You can either create a new activity or enter previous activities", ToastLength.Short).Show();
+            }
         }
 
         private void SetShowTotalHoursButtonView()
@@ -72,14 +96,16 @@ namespace GetOutside
 
         private void SetStartButtonView()
         {
-            // update textView for outdoor activity time
+            // update textView for outside activity time
             _currentActivityTextView.Text = "Current Outside Time";
 
             // set button visibility
             _startActivityButton.Visibility = ViewStates.Invisible;
+            _addActivityButton.Visibility = ViewStates.Invisible;
+            _discardActivityButton.Visibility = ViewStates.Visible;
             _pauseActivityButton.Visibility = ViewStates.Visible;
             _resumeActivityButton.Visibility = ViewStates.Invisible;
-            _stopActivityButton.Visibility = ViewStates.Visible;
+            _saveActivityButton.Visibility = ViewStates.Visible;
             _viewOutsideHoursButton.Visibility = ViewStates.Invisible;
 
         }
@@ -87,9 +113,11 @@ namespace GetOutside
         private void SetResumeButtonView()
         {
             _startActivityButton.Visibility = ViewStates.Invisible;
+            _addActivityButton.Visibility = ViewStates.Invisible;
+            _discardActivityButton.Visibility = ViewStates.Visible;
             _pauseActivityButton.Visibility = ViewStates.Visible;
             _resumeActivityButton.Visibility = ViewStates.Invisible;
-            _stopActivityButton.Visibility = ViewStates.Visible;
+            _saveActivityButton.Visibility = ViewStates.Visible;
             _viewOutsideHoursButton.Visibility = ViewStates.Invisible;
 
         }
@@ -97,19 +125,35 @@ namespace GetOutside
         private void SetPauseButtonView()
         {
             _startActivityButton.Visibility = ViewStates.Invisible;
+            _addActivityButton.Visibility = ViewStates.Invisible;
+            _discardActivityButton.Visibility = ViewStates.Visible;
             _pauseActivityButton.Visibility = ViewStates.Invisible;
             _resumeActivityButton.Visibility = ViewStates.Visible;
-            _stopActivityButton.Visibility = ViewStates.Visible;
+            _saveActivityButton.Visibility = ViewStates.Visible;
             _viewOutsideHoursButton.Visibility = ViewStates.Invisible;
         }
 
         private void SetStopButtonView()
         {
             _startActivityButton.Visibility = ViewStates.Visible;
+            _addActivityButton.Visibility = ViewStates.Visible;
+            _discardActivityButton.Visibility = ViewStates.Invisible;
             _viewOutsideHoursButton.Visibility = ViewStates.Visible;
             _pauseActivityButton.Visibility = ViewStates.Invisible;
             _resumeActivityButton.Visibility = ViewStates.Invisible;
-            _stopActivityButton.Visibility = ViewStates.Invisible;
+            _saveActivityButton.Visibility = ViewStates.Invisible;
+
+        }
+
+        private void SetDiscardButtonView()
+        {
+            _startActivityButton.Visibility = ViewStates.Visible;
+            _addActivityButton.Visibility = ViewStates.Visible;
+            _discardActivityButton.Visibility = ViewStates.Invisible;
+            _viewOutsideHoursButton.Visibility = ViewStates.Visible;
+            _pauseActivityButton.Visibility = ViewStates.Invisible;
+            _resumeActivityButton.Visibility = ViewStates.Invisible;
+            _saveActivityButton.Visibility = ViewStates.Invisible;
 
         }
 
@@ -120,26 +164,30 @@ namespace GetOutside
             SetPauseButtonView();
         }
 
-        private void _stopActivityButton_Click(object sender, EventArgs e)
+        private void _saveActivityButton_Click(object sender, EventArgs e)
         {
             _currentActivityChronometer.Stop();
 
-            // Finalize OutsideActivityDatabase entry - set end time, durationMilliseconds, Name, done flag
+            //Finalize OutsideActivityDatabase entry - set end time, durationMilliseconds, Name, done flag
+            //_currentOutsideActivity.StartTime = new DateTime(2020, 3, 11, 20, 12, 13);
+            //_currentOutsideActivity.EndTime = new DateTime(2020, 3, 11, 22, 12, 13);
+            //_currentOutsideActivity.DurationMilliseconds = 7200000;
+            //_currentOutsideActivity.YearMonth = "2020-03";
+
             _currentOutsideActivity.EndTime = DateTime.Now;
             _currentOutsideActivity.DurationMilliseconds = convertChronometerToDuration(_currentActivityChronometer.Text.ToString());
-            _currentOutsideActivity.Name = "outsideActivity-" + _currentOutsideActivity.EndTime.ToString("yyyyMMddHHmmssff");
+            _currentOutsideActivity.Name = "outsideActivity-" + _currentOutsideActivity.StartTime.ToString("yyyyMMddHHmmssff");
             _currentOutsideActivity.Done = true;
 
             // write to the db
             // database.SaveItemAsync(_currentOutsideActivity);
             SetStopButtonView();
-            _dataService.CreateOutsideActivity(_currentOutsideActivity);
+            _dataService.UpdateOutsideActivity(_currentOutsideActivity);
 
             DateTime dt = new DateTime(_currentOutsideActivity.DurationMilliseconds);
             long ticks = dt.Ticks * 10000;
             TimeSpan elapsedSpan = new TimeSpan(ticks);
             Toast.MakeText(Application.Context, "Current outside activity time: " + string.Format("{0:hh\\:mm\\:ss}", elapsedSpan), ToastLength.Short).Show();
-
         }
 
         private long convertChronometerToDuration(string chronoText)
@@ -167,10 +215,11 @@ namespace GetOutside
             _currentActivityChronometer.Base = SystemClock.ElapsedRealtime();
             _currentActivityChronometer.Start();
             _currentOutsideActivity.StartTime = DateTime.Now;
+            _currentOutsideActivity.YearMonth = _currentOutsideActivity.StartTime.ToString("yyyy'-'MM");
 
- 
+            _dataService.CreateOutsideActivity(_currentOutsideActivity);
+
             SetStartButtonView();
-
         }
 
         private void _resumeActivityButton_Click(object sender, EventArgs e)
@@ -178,28 +227,26 @@ namespace GetOutside
             _currentActivityChronometer.Base = SystemClock.ElapsedRealtime() - _currentOutsideActivity.DurationMilliseconds;
             _currentActivityChronometer.Start();
             SetResumeButtonView();
-
         }
 
-        private void _recordHoursButton_Click(object sender, EventArgs e)
+        private void _addActivityButton_Click(object sender, EventArgs e)
         {
-            //_previousOutsideHoursTimePicker.Visibility = ViewStates.Visible; 
-            //Intent intent = new Intent(this, typeof(RecordHoursActivity));
-            //StartActivity(intent);
+            Intent manualOutsideEntryActivityIntent = new Intent(this, typeof(ManualOutsideEntryActivity));
+            StartActivity(manualOutsideEntryActivityIntent);
         }
 
         private void FindViews()
         {
-            // _recordHoursButton = FindViewById<Button>(Resource.Id.recordHoursButton);
-            //  _previousOutsideHoursTimePicker = FindViewById<TimePicker>(Resource.Id.previousOutsideHoursTimePicker);
-            _startActivityButton = FindViewById<Button>(Resource.Id.startActivityButton);
-            _stopActivityButton = FindViewById<Button>(Resource.Id.stopActivityButton);
+             _startActivityButton = FindViewById<Button>(Resource.Id.startActivityButton);
+            _saveActivityButton = FindViewById<Button>(Resource.Id.saveActivityButton);
             _pauseActivityButton = FindViewById<Button>(Resource.Id.pauseActivityButton);
+            _discardActivityButton = FindViewById<Button>(Resource.Id.discardActivityButton);
             _resumeActivityButton = FindViewById<Button>(Resource.Id.resumeActivityButton);
+            _addActivityButton = FindViewById<Button>(Resource.Id.addActivityButton);
             _currentActivityChronometer = FindViewById<Chronometer>(Resource.Id.currentActivityChronometer);
             _viewOutsideHoursButton = FindViewById<Button>(Resource.Id.viewOutsideHoursButton);
             _currentActivityTextView = FindViewById<TextView>(Resource.Id.currentActivityTextView);
-            SetStopButtonView();
+
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)

@@ -1,24 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-     <ProgressBar
-       android:progress="@integer/status_bar_notification_info_maxnum"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/outsideHoursProgressBar" />
-
-    <android.support.design.widget.TextInputEditText
+       <android.support.design.widget.TextInputEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minWidth="25px"
         android:minHeight="25px"
         android:id="@+id/textInputEditText1" />
     <TextView
-        android:text="Add Hours for Today"
+        android:text="Select Date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/addHoursForTodayTextView"
@@ -34,15 +29,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout1">
-
         <TextView
-            android:text="Hours Today: "
+            android:text="Date: "
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textColor="@android:color/black"
             android:paddingTop="20dp"
             android:textSize="16dp"
-            android:id="@+id/hoursTodayTextView"
+            android:id="@+id/dateTextView"
+            android:textStyle="bold"
+        />
+        <EditText
+            android:inputType="datetime"
+            android:text="1"
+            android:hint="1"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:id="@+id/dateOfActivityText"
+            android:background="@android:color/white"
+            android:textColor="@android:color/black"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:textStyle="bold"
+             />
+        <TextView
+            android:text="Hours To Add: "
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@android:color/black"
+            android:paddingTop="20dp"
+            android:textSize="16dp"
+            android:id="@+id/hoursToAddTextView"
             android:textStyle="bold"
         />
         <EditText
