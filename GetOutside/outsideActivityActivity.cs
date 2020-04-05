@@ -34,5 +34,11 @@ namespace GetOutside
             _outsideActivityAdapter = new outsideActivityAdapter();
             _outsideActivityRecyclerView.SetAdapter(_outsideActivityAdapter);
         }
+
+        void OnItemClick (object sender, int position)
+        {
+            int itemNum = position + 1;
+
+        }
     }
 }

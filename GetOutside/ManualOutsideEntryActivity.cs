@@ -21,6 +21,9 @@ namespace GetOutside
         public Button _addHoursButton;
         public EditText _dateOfActivityText;
         public EditText _hoursToAddText;
+
+        public DatePicker _dateOfActivityDatePicker;
+        public NumberPicker _hoursToAddNumberPicker;
         private outsideActivity _newOutsideActivity = new outsideActivity();
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -37,6 +40,11 @@ namespace GetOutside
             FindViews();
             //BindData();
             LinkEventHandlers();
+
+            _hoursToAddNumberPicker.MaxValue = 24;
+            _dateOfActivityDatePicker.MaxDate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            _dateOfActivityDatePicker.MinDate = DateTimeOffset.Now.AddYears(-20).ToUnixTimeMilliseconds();
+            
         }
 
         private void BindData()
@@ -46,23 +54,23 @@ namespace GetOutside
 
         private void LinkEventHandlers()
         {
-            _addHoursButton.Click += _addHoursButton_Click; ;
+            _addHoursButton.Click += _addHoursButton_Click;
+            //_datePicker.
         }
 
         private void _addHoursButton_Click(object sender, EventArgs e)
         {
             // Get the base starting time and start the timer
             _newOutsideActivity.Done = true;
-            _newOutsideActivity.StartTime = DateTime.Parse(_dateOfActivityText.Text);
-            _newOutsideActivity.DurationMilliseconds = int.Parse(_hoursToAddText.Text) * 3600000;
+            //_newOutsideActivity.StartTime = DateTime.Parse(_dateOfActivityText.Text);
+            //_newOutsideActivity.DurationMilliseconds = int.Parse(_hoursToAddText.Text) * 3600000;
+            
+            _newOutsideActivity.StartTime = _dateOfActivityDatePicker.DateTime;
+            _newOutsideActivity.DurationMilliseconds = _hoursToAddNumberPicker.Value * 3600000;
             _newOutsideActivity.YearMonth = _newOutsideActivity.StartTime.ToString("yyyy'-'MM");
             _newOutsideActivity.Name = "outsideActivity-" + _newOutsideActivity.StartTime.ToString("yyyyMMddHHmmssff");
-            _newOutsideActivity.EndTime = _newOutsideActivity.StartTime.AddMilliseconds(_newOutsideActivity.DurationMilliseconds);
             
-            //_currentActivityChronometer.Base = SystemClock.ElapsedRealtime();
-            //_currentActivityChronometer.Start();
-            //_currentOutsideActivity.StartTime = DateTime.Now;
-            //_currentOutsideActivity.YearMonth = _currentOutsideActivity.StartTime.ToString("yyyy'-'MM");
+            //_newOutsideActivity.EndTime = _newOutsideActivity.StartTime.AddMilliseconds(_newOutsideActivity.DurationMilliseconds);
 
             _dataService.CreateOutsideActivity(_newOutsideActivity);
             base.OnBackPressed();
@@ -71,14 +79,9 @@ namespace GetOutside
         private void FindViews()
         {
             _addHoursButton = FindViewById<Button>(Resource.Id.addHoursButton);
-            _dateOfActivityText = FindViewById<EditText>(Resource.Id.dateOfActivityText);
-            _hoursToAddText = FindViewById<EditText>(Resource.Id.hoursToAddText);
-//                FindViewById<EditText>(Resource.Id.hoursToAddText);
-//            _dateOfActivityText = DateTime.Parse(.ToString());
-            //EditText hoursToAdd = FindViewById<EditText>(Resource.Id.hoursToAddText);
-            //_hoursToAdd = int.Parse(hoursToAdd);
-            //_dateOfActivityText = DateTime.Parse(FindViewById<EditText>(Resource.Id.dateOfActivityText).ToString());
-            //_hoursToAdd = FindViewById<EditText>(Resource.Id.hoursToAddText);
+            _hoursToAddNumberPicker = FindViewById<NumberPicker>(Resource.Id.hoursToAddNumberPicker);
+            _dateOfActivityDatePicker = FindViewById<DatePicker>(Resource.Id.dateOfActivityDatePicker);
+
         }
     }
 }

@@ -16,9 +16,10 @@ namespace GetOutside.ViewHolders
     {
         public TextView OutsideActivityTextView { get; set;}
 
-        public OutsideActivityViewHolder(View itemView) : base(itemView)
+        public OutsideActivityViewHolder(View itemView, Action<int> listener) : base(itemView)
         {
             OutsideActivityTextView = itemView.FindViewById<TextView>(Resource.Id.outsideActivityTextView);
+            ItemView.Click += (sender, e) => listener(Position);
         }
     }
 }

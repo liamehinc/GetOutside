@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Android.App;
 using Android.Widget;
 using GetOutside.Core.Model;
@@ -28,15 +29,23 @@ namespace GetOutside.Database
 
         public System.Collections.Generic.List<outsideActivity> GetOutsideActivity()
         {
-            return _database.Table<outsideActivity>().ToList();
+            //return _database.Table<outsideActivity>().ToList();
+            System.Collections.Generic.List<outsideActivity> outsideActivities = _database.Query<outsideActivity>("select StartTime, YearMonth, DurationMilliseconds from outsideActivity order by StartTime desc");
+            return outsideActivities;
         }
 
         public System.Collections.Generic.List<outsideActivity> GetOutsideHoursByMonth()
         {
-            System.Collections.Generic.List<outsideActivity> outsideHoursByMonth = _database.Query<outsideActivity>("SELECT * FROM outsideActivity order by StartTime");
-            //var outsideHoursByMonth = _database.Query<outsideActivity>("SELECT strftime('%Y-%m', StartTime) as StartTime, SUM(DurationMilliseconds) FROM outsideActivity Group By strftime('%Y-%m',StartTime)");
+            System.Collections.Generic.List<outsideActivity> outsideHoursByMonth = _database.Query<outsideActivity>("select YearMonth, sum(DurationMilliseconds) as DurationMilliseconds from outsideActivity group by YearMonth");
 
             return outsideHoursByMonth;
+        }
+
+        public System.Collections.Generic.List<outsideActivity> GetOutsideHoursByDay()
+        {
+            System.Collections.Generic.List<outsideActivity> outsideHoursByDay = _database.Query<outsideActivity>("SELECT date(StartTime/10000000 - 62135596800, 'unixepoch') as StartTime, YearMonth,DurationMilliseconds, sum(DurationMilliseconds / 3600000 ) as Hours FROM outsideActivity  group by date(StartTime/10000000 - 62135596800, 'unixepoch')");
+
+            return outsideHoursByDay;
         }
 
         public TimeSpan GetOutsideHours()
@@ -60,11 +69,13 @@ namespace GetOutside.Database
             if (_database == null)
             {
                 string dbPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "GetOutsideDatabase.db3");
+                //string dbPath = Path.Combine("/acct/", "GetOutsideDatabase.db3");
                 _database = new SQLiteConnection(dbPath);
             }
 
             _database.CreateTable<User>();
             _database.CreateTable<outsideActivity>();
+            _database.Query<outsideActivity>("update outsideActivity set YearMonth = strftime('%Y-%m', datetime(StartTime/10000000 - 62135596800, 'unixepoch')) where YearMonth is null");
         }
 
         public void UpdateOutsideActivity(outsideActivity outsideActivity)

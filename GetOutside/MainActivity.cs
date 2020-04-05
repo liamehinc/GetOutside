@@ -41,7 +41,7 @@ namespace GetOutside
 
             FindViews();
             LinkEventHandlers();
-            SetStopButtonView();
+            SetSaveButtonView();
         }
 
         private void LinkEventHandlers()
@@ -133,7 +133,7 @@ namespace GetOutside
             _viewOutsideHoursButton.Visibility = ViewStates.Invisible;
         }
 
-        private void SetStopButtonView()
+        private void SetSaveButtonView()
         {
             _startActivityButton.Visibility = ViewStates.Visible;
             _addActivityButton.Visibility = ViewStates.Visible;
@@ -181,7 +181,7 @@ namespace GetOutside
 
             // write to the db
             // database.SaveItemAsync(_currentOutsideActivity);
-            SetStopButtonView();
+            SetSaveButtonView();
             _dataService.UpdateOutsideActivity(_currentOutsideActivity);
 
             DateTime dt = new DateTime(_currentOutsideActivity.DurationMilliseconds);

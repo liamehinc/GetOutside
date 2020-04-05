@@ -93,7 +93,7 @@
         android:backgroundTint="@color/mapleLeafRed"
         />
     <Button
-        android:text="Show Total Outside Hours"
+        android:text="Show Outside Hours By Month"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/viewOutsideHoursButton"

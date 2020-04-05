@@ -17,37 +17,29 @@ using GetOutside.ViewHolders;
 namespace GetOutside.Adapters
 {
 
-    class outsideActivityAdapter : RecyclerView.Adapter
+    public class outsideActivityAdapter : RecyclerView.Adapter
     {
+        private List<outsideActivity> _outsideActivities;
         private List<outsideActivity> _outsideActivitiesByMonth;
         public SqliteDataService _dataService = new SqliteDataService();
+        public event EventHandler<int> ItemClick;
 
         public outsideActivityAdapter()
         {
             _dataService.Initialize();
             _outsideActivitiesByMonth = _dataService.GetOutsideHoursByMonth();
-
-            var query = _outsideActivitiesByMonth.GroupBy(
-                            outsideActivity => outsideActivity.StartTime.ToString("yyyy'-'MM"),
-                            outsideActivity => outsideActivity.DurationMilliseconds,
-                            (yearMonth, durations) => new
-                            {
-                                Key = yearMonth,
-                                timeOutside = durations.Sum() / 36000
-                            });
-
+            //_outsideActivitiesByMonth = _dataService.GetOutsideHoursByDay();
+            //_outsideActivitiesByMonth = _dataService.GetOutsideActivity();
         }
+
         public override int ItemCount => _outsideActivitiesByMonth.Count;
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
             if (holder is OutsideActivityViewHolder outsideActivityViewHolder)
             {
-                // convert the durationMilliseconds to dateTime format
-                //TimeSpan duration = TimeSpan.FromMilliseconds(_outsideActivities[position].DurationMilliseconds);
-                //string sDuration = duration.ToString(@"hh\:mm\:ss");
-
-                outsideActivityViewHolder.OutsideActivityTextView.Text = _outsideActivitiesByMonth[position].StartTime.ToString("yyyy-MM-dd") + '\t' + (TimeSpan.FromMilliseconds(_outsideActivitiesByMonth[position].DurationMilliseconds)).ToString();
+                //outsideActivityViewHolder.OutsideActivityTextView.Text = _outsideActivitiesByMonth[position].StartTime.ToString("yyyy-MM-dd") + "  " + (TimeSpan.FromMilliseconds(_outsideActivitiesByMonth[position].DurationMilliseconds)).ToString();
+                outsideActivityViewHolder.OutsideActivityTextView.Text = _outsideActivitiesByMonth[position].YearMonth + "  " + (TimeSpan.FromMilliseconds(_outsideActivitiesByMonth[position].DurationMilliseconds)).ToString();
             }
         }
 
@@ -55,8 +47,13 @@ namespace GetOutside.Adapters
         {
         
             View itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.outside_activity_viewholder, parent, false);
-            OutsideActivityViewHolder outsideActivityViewHolder = new OutsideActivityViewHolder(itemView);
+            OutsideActivityViewHolder outsideActivityViewHolder = new OutsideActivityViewHolder(itemView, OnClick);
             return outsideActivityViewHolder;
+        }
+
+        private void OnClick(int obj)
+        {
+            ItemClick?.Invoke(this, obj);
         }
     }
 
