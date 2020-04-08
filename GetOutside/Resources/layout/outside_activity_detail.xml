@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/manualActivityEntryMainLinearLayout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/GetOutsideBackground"
+    >
+    <TextView
+        android:text="Recent Outside Activities"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/OutsideActivityDetailTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+    />
+   <android.support.v7.widget.RecyclerView
+        android:id="@+id/outsideActivityDetailRecyclerView"
+        android:layout_margin="5dp"
+        android:clickable="true"
+        android:scrollbars="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+
+</LinearLayout>

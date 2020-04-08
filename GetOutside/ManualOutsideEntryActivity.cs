@@ -14,7 +14,7 @@ using GetOutside.Database;
 
 namespace GetOutside
 {
-    [Activity(Label = "ManualOutsideEntryActivity")]
+    [Activity(Label = "ManualOutsideEntryActivity", Theme = "@style/AppTheme")]
     public class ManualOutsideEntryActivity : Activity
     {
         public SqliteDataService _dataService = new SqliteDataService();

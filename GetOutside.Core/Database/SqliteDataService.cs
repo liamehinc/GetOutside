@@ -29,21 +29,32 @@ namespace GetOutside.Database
 
         public System.Collections.Generic.List<outsideActivity> GetOutsideActivity()
         {
-            //return _database.Table<outsideActivity>().ToList();
-            System.Collections.Generic.List<outsideActivity> outsideActivities = _database.Query<outsideActivity>("select StartTime, YearMonth, DurationMilliseconds from outsideActivity order by StartTime desc");
+            //            return _database.Table<outsideActivity>().ToList();
+            System.Collections.Generic.List<outsideActivity> outsideActivities = _database.Query<outsideActivity>("select StartTime, YearMonth, DurationMilliseconds,name from outsideActivity order by StartTime desc");
             return outsideActivities;
+        }
+
+        public outsideActivity GetLatestInProgressOutsideActivity()
+        {
+            //            return _database.Table<outsideActivity>().ToList();
+            string query = "select StartTime, YearMonth, DurationMilliseconds,Done,datetime('now') from outsideActivity where date(StartTime/ 10000000 - 62135596800,'unixepoch') > date('now', '-1 day') AND done = false order by StartTime desc limit 1";
+            System.Collections.Generic.List<outsideActivity> outsideActivities = _database.Query<outsideActivity>(query);
+
+            return outsideActivities[0];
         }
 
         public System.Collections.Generic.List<outsideActivity> GetOutsideHoursByMonth()
         {
-            System.Collections.Generic.List<outsideActivity> outsideHoursByMonth = _database.Query<outsideActivity>("select YearMonth, sum(DurationMilliseconds) as DurationMilliseconds from outsideActivity group by YearMonth");
-
+            //System.Collections.Generic.List<outsideActivity> outsideHoursByMonth = _database.Query<outsideActivity>("select YearMonth, sum(DurationMilliseconds),Date(StartTime, as DurationMilliseconds from outsideActivity group by YearMonth");
+            string query = "select StartTime, sum(DurationMilliseconds) as DurationMilliseconds  from outsideActivity group by strftime('%Y-%m',date(StartTime/10000000 - 62135596800, 'unixepoch')) order by StartTime desc";
+            System.Collections.Generic.List<outsideActivity> outsideHoursByMonth = _database.Query<outsideActivity>(query);
             return outsideHoursByMonth;
         }
 
         public System.Collections.Generic.List<outsideActivity> GetOutsideHoursByDay()
         {
-            System.Collections.Generic.List<outsideActivity> outsideHoursByDay = _database.Query<outsideActivity>("SELECT date(StartTime/10000000 - 62135596800, 'unixepoch') as StartTime, YearMonth,DurationMilliseconds, sum(DurationMilliseconds / 3600000 ) as Hours FROM outsideActivity  group by date(StartTime/10000000 - 62135596800, 'unixepoch')");
+            string query = "select StartTime, sum(DurationMilliseconds) as DurationMilliseconds  from outsideActivity group by strftime('%Y-%m-%d',date(StartTime/10000000 - 62135596800, 'unixepoch')) order by StartTime desc";
+            System.Collections.Generic.List<outsideActivity> outsideHoursByDay = _database.Query<outsideActivity>(query);
 
             return outsideHoursByDay;
         }
@@ -89,7 +100,7 @@ namespace GetOutside.Database
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            ((IDisposable)_database).Dispose();
         }
     }
 }

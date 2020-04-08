@@ -78,13 +78,16 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adapters\outsideActivityAdapter.cs" />
+    <Compile Include="Adapters\outsideActivityAggregationAdapter.cs" />
+    <Compile Include="Adapters\outsideActivityDetailAdapter.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="ManualOutsideEntryActivity.cs" />
-    <Compile Include="outsideActivityActivity.cs" />
+    <Compile Include="outsideActivityAggregationActivity.cs" />
+    <Compile Include="OutsideActivityDetailActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewHolders\OutsideActivityViewHolder.cs" />
+    <Compile Include="ViewHolders\OutsideActivityAggregationViewHolder.cs" />
+    <Compile Include="ViewHolders\OutsideActivityDetailViewHolder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -166,12 +169,7 @@
     <AndroidResource Include="Resources\drawable\GetOutsideBackground.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\outside_activity.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\outside_activity_viewholder.xml">
+    <AndroidResource Include="Resources\layout\outside_activity_aggregation_viewholder.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -179,7 +177,13 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\outside_activity_table.xml">
+    <AndroidResource Include="Resources\layout\outside_activity_aggregation.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\outside_activity_detail.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\outside_activity_detail_viewholder.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
