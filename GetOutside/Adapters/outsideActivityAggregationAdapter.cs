@@ -17,10 +17,7 @@ namespace GetOutside.Adapters
         public outsideActivityAggregationAdapter()
         {
             _dataService.Initialize();
-            //_outsideActivitiesByMonth = _dataService.GetOutsideHoursByMonth();
-            //_outsideActivitiesByMonth = _dataService.GetOutsideHoursByDay();
-            _outsideActivitiesByMonth = _dataService.GetOutsideActivity();
-
+            _outsideActivitiesByMonth = _dataService.GetOutsideHoursByMonth();
         }
 
         public override int ItemCount => _outsideActivitiesByMonth.Count;
@@ -29,7 +26,7 @@ namespace GetOutside.Adapters
         {
             if (holder is OutsideActivityAggregationViewHolder outsideActivityViewHolder)
             {
-                outsideActivityViewHolder.OutsideActivityAggregationTextView.Text = _outsideActivitiesByMonth[position].StartTime.ToString("yyyy-MM-dd") + "  " + _outsideActivitiesByMonth[position].YearMonth + "  " + (TimeSpan.FromMilliseconds(_outsideActivitiesByMonth[position].DurationMilliseconds)).ToString();
+                outsideActivityViewHolder.OutsideActivityAggregationTextView.Text = _outsideActivitiesByMonth[position].StartTime.ToString("yyyy-MM") + "  " + _outsideActivitiesByMonth[position].YearMonth + "  " + (TimeSpan.FromMilliseconds(_outsideActivitiesByMonth[position].DurationMilliseconds)).ToString();
             }
         }
 

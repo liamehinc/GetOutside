@@ -8,7 +8,7 @@
     android:background="@drawable/GetOutsideBackground"
     >
     <TextView
-        android:text="Recent Outside Activities By Month"
+        android:text="Outside Activities By Month"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/recentOutsideActivityTextView"
         android:layout_width="match_parent"

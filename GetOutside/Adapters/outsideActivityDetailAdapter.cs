@@ -17,18 +17,8 @@ namespace GetOutside
         public outsideActivityDetailAdapter()
         {
             _dataService.Initialize();
-            //_outsideActivities = _dataService.GetOutsideActivity();
-            _outsideActivities = _dataService.GetOutsideHoursByDay();
-            //_outsideActivities = _dataService.GetOutsideActivity();
-
-            //var query = _outsideActivities.GroupBy(
-            //               outsideActivity => outsideActivity.StartTime.ToString("yyyy'-'MM"),
-            //               outsideActivity => outsideActivity.DurationMilliseconds,
-            //               (grouping, durations) => new
-            //               {
-            //                   Key = grouping,
-            //                   timeOutside = durations.Sum() / 36000
-            //               });
+            _outsideActivities = _dataService.GetOutsideActivity();
+ 
         }
 
         public override int ItemCount => _outsideActivities.Count;

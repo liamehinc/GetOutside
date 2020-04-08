@@ -31,7 +31,7 @@ namespace GetOutside
         private void _outsideActivityAggregationAdapter_ItemClick(object sender, int e)
         {
             var intent = new Intent();
-            intent.SetClass(this, typeof(OutsideActivityDetailActivity));
+            intent.SetClass(this, typeof(OutsideActivityDailyActivity));
             intent.PutExtra("selectedOutsideActivityId", e);
             StartActivity(intent);
         }

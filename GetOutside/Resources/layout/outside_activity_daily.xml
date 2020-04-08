@@ -8,16 +8,16 @@
     android:background="@drawable/GetOutsideBackground"
     >
     <TextView
-        android:text="Outside Activities"
+        android:text="Outside Activities By Day"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/OutsideActivityDetailTextView"
+        android:id="@+id/OutsideActivityDailyTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="10dp"
     />
    <android.support.v7.widget.RecyclerView
-        android:id="@+id/outsideActivityDetailRecyclerView"
+        android:id="@+id/outsideActivityDailyRecyclerView"
         android:layout_margin="5dp"
         android:clickable="true"
         android:scrollbars="vertical"
