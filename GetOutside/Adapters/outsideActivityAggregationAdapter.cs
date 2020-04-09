@@ -26,7 +26,7 @@ namespace GetOutside.Adapters
         {
             if (holder is OutsideActivityAggregationViewHolder outsideActivityViewHolder)
             {
-                outsideActivityViewHolder.OutsideActivityAggregationTextView.Text = _outsideActivitiesByMonth[position].StartTime.ToString("yyyy-MM") + "  " + _outsideActivitiesByMonth[position].YearMonth + "  " + (TimeSpan.FromMilliseconds(_outsideActivitiesByMonth[position].DurationMilliseconds)).ToString();
+                outsideActivityViewHolder.OutsideActivityAggregationTextView.Text = _outsideActivitiesByMonth[position].StartTime.ToString("yyyy-MM") + "  " + (TimeSpan.FromMilliseconds(_outsideActivitiesByMonth[position].DurationMilliseconds)).ToString();
             }
         }
 

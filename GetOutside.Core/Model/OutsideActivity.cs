@@ -10,9 +10,6 @@ namespace GetOutside.Core.Model
         [PrimaryKey, AutoIncrement]
         public int OutsideActivityId { get; set; }
         public string Name { get; set; }
-        public string YearMonth { get; set; }
-        //public int Hours { get; set; }
-        //public int Minutes { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public long DurationMilliseconds { get; set; }
@@ -21,6 +18,7 @@ namespace GetOutside.Core.Model
         public int UserId { get; set; }
         public string Notes { get; set; }
         public bool Done { get; set; }
+        public bool isTracking { get; set; }
 
     }
 }

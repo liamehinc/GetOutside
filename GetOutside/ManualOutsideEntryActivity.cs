@@ -62,15 +62,12 @@ namespace GetOutside
         {
             // Get the base starting time and start the timer
             _newOutsideActivity.Done = true;
-            //_newOutsideActivity.StartTime = DateTime.Parse(_dateOfActivityText.Text);
-            //_newOutsideActivity.DurationMilliseconds = int.Parse(_hoursToAddText.Text) * 3600000;
             
             _newOutsideActivity.StartTime = _dateOfActivityDatePicker.DateTime;
             _newOutsideActivity.DurationMilliseconds = _hoursToAddNumberPicker.Value * 3600000;
-            _newOutsideActivity.YearMonth = _newOutsideActivity.StartTime.ToString("yyyy'-'MM");
             _newOutsideActivity.Name = "outsideActivity-" + _newOutsideActivity.StartTime.ToString("yyyyMMddHHmmssff");
             
-            //_newOutsideActivity.EndTime = _newOutsideActivity.StartTime.AddMilliseconds(_newOutsideActivity.DurationMilliseconds);
+            _newOutsideActivity.EndTime = _newOutsideActivity.StartTime.AddMilliseconds(_newOutsideActivity.DurationMilliseconds);
 
             _dataService.CreateOutsideActivity(_newOutsideActivity);
             base.OnBackPressed();
