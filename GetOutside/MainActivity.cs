@@ -28,7 +28,6 @@ namespace GetOutside
         //private Button _recordHoursButton;
 
         private outsideActivity _currentOutsideActivity = new outsideActivity();
-        private object super;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {

@@ -7,7 +7,7 @@ using GetOutside.Adapters;
 namespace GetOutside
 {
     [Activity(Label = "outsideActivityDailyActivity", Theme = "@style/AppTheme")]
-    internal class OutsideActivityDailyActivity : Activity
+    public class OutsideActivityDailyActivity : Activity
     {
         private RecyclerView _outsideActivityDailyRecyclerView;
         private RecyclerView.LayoutManager _outsideActivityLayoutManager;

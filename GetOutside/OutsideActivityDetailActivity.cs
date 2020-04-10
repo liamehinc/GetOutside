@@ -21,7 +21,6 @@ namespace GetOutside
             // Create your application here
             SetContentView(Resource.Layout.outside_activity_detail);
             _outsideActivityDetailRecyclerView = FindViewById<RecyclerView>(Resource.Id.outsideActivityDetailRecyclerView);
-//            _outsideActivityDetailRecyclerView = FindViewById<RecyclerView>(Resource.Id.outsideActivityDetailRecyclerView);
 
             _outsideActivityLayoutManager = new LinearLayoutManager(this);
             _outsideActivityDetailRecyclerView.SetLayoutManager(_outsideActivityLayoutManager);
@@ -32,6 +31,7 @@ namespace GetOutside
 
         private void _outsideActivityDetailAdapter_ItemClick(object sender, int e)
         {
+            // Bring up edit activity activity
             //var intent = new Intent();
             //intent.SetClass(this, typeof(OutsideActivityDailyActivity));
             //intent.PutExtra("selectedOutsideActivityId", e);
