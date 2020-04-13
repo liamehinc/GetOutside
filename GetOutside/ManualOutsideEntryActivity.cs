@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -17,13 +18,13 @@ namespace GetOutside
     [Activity(Label = "ManualOutsideEntryActivity", Theme = "@style/AppTheme", MainLauncher = true)]
     public class ManualOutsideEntryActivity : Activity
     {
-        public SqliteDataService _dataService = new SqliteDataService();
-        public Button _addHoursButton;
-        public EditText _dateOfActivityText;
-        public EditText _hoursToAddText;
+        private SqliteDataService _dataService = new SqliteDataService();
+        private Button _addHoursButton;
+        //private EditText _dateOfActivityText;
+        //private EditText _hoursToAddText;
 
-        public DatePicker _dateOfActivityDatePicker;
-        public NumberPicker _hoursToAddNumberPicker;
+        private DatePicker _dateOfActivityDatePicker;
+        private NumberPicker _hoursToAddNumberPicker;
         private outsideActivity _newOutsideActivity = new outsideActivity();
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -65,7 +66,7 @@ namespace GetOutside
             
             _newOutsideActivity.StartTime = _dateOfActivityDatePicker.DateTime;
             _newOutsideActivity.DurationMilliseconds = _hoursToAddNumberPicker.Value * 3600000;
-            _newOutsideActivity.Name = "outsideActivity-" + _newOutsideActivity.StartTime.ToString("yyyyMMddHHmmssff");
+            _newOutsideActivity.Name = "outsideActivity-" + _newOutsideActivity.StartTime.ToString("yyyyMMddHHmmssff", CultureInfo.CurrentCulture);
             
             _newOutsideActivity.EndTime = _newOutsideActivity.StartTime.AddMilliseconds(_newOutsideActivity.DurationMilliseconds);
 

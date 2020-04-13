@@ -11,6 +11,8 @@ namespace GetOutside
 
         public OutsideActivityDetailViewHolder(View itemView, Action<int> listener) : base(itemView)
         {
+            if (itemView == null) throw new ArgumentNullException(nameof(itemView));
+
             OutsideActivityDetailTextView = itemView.FindViewById<TextView>(Resource.Id.outsideActivityDetailTextView);
             itemView.Click += (sender, e) => listener(LayoutPosition);
         }  

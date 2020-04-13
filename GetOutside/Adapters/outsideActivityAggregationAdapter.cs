@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Android.Support.V7.Widget;
 using Android.Views;
 using GetOutside.Core.Model;
@@ -11,7 +12,7 @@ namespace GetOutside.Adapters
     public class outsideActivityAggregationAdapter : RecyclerView.Adapter
     {
         private List<outsideActivity> _outsideActivitiesByMonth;
-        public SqliteDataService _dataService = new SqliteDataService();
+        private SqliteDataService _dataService = new SqliteDataService();
         public event EventHandler<int> ItemClick;
 
         public outsideActivityAggregationAdapter()
@@ -26,12 +27,14 @@ namespace GetOutside.Adapters
         {
             if (holder is OutsideActivityAggregationViewHolder outsideActivityViewHolder)
             {
-                outsideActivityViewHolder.OutsideActivityAggregationTextView.Text = _outsideActivitiesByMonth[position].StartTime.ToString("yyyy-MM") + "  " + (TimeSpan.FromMilliseconds(_outsideActivitiesByMonth[position].DurationMilliseconds)).ToString();
+                outsideActivityViewHolder.OutsideActivityAggregationTextView.Text = _outsideActivitiesByMonth[position].StartTime.ToString("yyyy-MM", CultureInfo.CurrentCulture) + "  " + (TimeSpan.FromMilliseconds(_outsideActivitiesByMonth[position].DurationMilliseconds)).ToString();
             }
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
+            if (parent == null) throw new ArgumentNullException(nameof(parent));
+
             View itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.outside_activity_aggregation_viewholder, parent, false);
             OutsideActivityAggregationViewHolder outsideActivityAggregationViewHolder = new OutsideActivityAggregationViewHolder(itemView, OnClick);
             return outsideActivityAggregationViewHolder;

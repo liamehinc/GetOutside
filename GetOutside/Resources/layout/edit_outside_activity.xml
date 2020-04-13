@@ -1,0 +1,66 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/GetOutsideBackground">
+
+    <TextView
+        android:id="@+id/editOutsideActivityNameTextView"
+        android:text="Outside Activity Name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <EditText
+            android:id="@+id/editOutsideActivityNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:imeOptions="actionGo"
+            />
+
+    <TextView
+        android:id="@+id/editOutsideActivityStartDateTextView"
+        android:text="Outside Activity Start Date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="150dp"
+        />
+    <EditText
+        android:id="@+id/editOutsideActivityStartDateEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/editOutsideActivityStartTimeTextView"
+        android:text="Outside Activity StartTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="150dp"
+        />
+    <EditText
+        android:id="@+id/editOutsideActivityStartTimeEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/editOutsideActivityDurationTextView"
+        android:text="Outside Activity Duration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TimePicker
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editOutsideActivityDurationTimePicker" 
+        android:timePickerMode="spinner"
+        />
+    
+    <Button
+        android:text="Update Outside Activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/outsideBrown"
+        android:backgroundTint="@color/springGreen"
+        android:id="@+id/updateOutsideActivityButton" />
+   
+</LinearLayout>

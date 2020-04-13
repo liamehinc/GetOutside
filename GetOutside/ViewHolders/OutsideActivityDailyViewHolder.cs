@@ -11,6 +11,8 @@ namespace GetOutside.ViewHolders
 
         public OutsideActivityDailyViewHolder(View itemView, Action<int> listener) : base(itemView)
         {
+            if (itemView == null) throw new ArgumentNullException(nameof(itemView));
+
             OutsideActivityDailyTextView = itemView.FindViewById<TextView>(Resource.Id.outsideActivityDailyTextView);
             itemView.Click += (sender, e) => listener(LayoutPosition);
         }

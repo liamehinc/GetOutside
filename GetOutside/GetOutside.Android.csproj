@@ -81,6 +81,7 @@
     <Compile Include="Adapters\outsideActivityAggregationAdapter.cs" />
     <Compile Include="Adapters\outsideActivityDailyAdapter.cs" />
     <Compile Include="Adapters\outsideActivityDetailAdapter.cs" />
+    <Compile Include="EditOutsideActivityActivity.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="ManualOutsideEntryActivity.cs" />
     <Compile Include="outsideActivityAggregationActivity.cs" />
@@ -197,6 +198,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\outside_activity_daily_viewholder.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\edit_outside_activity.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

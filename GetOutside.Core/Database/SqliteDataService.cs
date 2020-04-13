@@ -57,7 +57,8 @@ namespace GetOutside.Database
         {
             try
             {
-                Int64 outsideTime = _database.ExecuteScalar<int>("Select SUM(DurationMilliseconds) FROM OutsideActivity where DurationMilliseconds > 0");
+                Int64 outsideTime = _database.ExecuteScalar<Int64>("Select SUM(DurationMilliseconds) FROM OutsideActivity where DurationMilliseconds > 0");
+                //Int64 outsideTime = _database.Query<int>("Select SUM(DurationMilliseconds) FROM OutsideActivity where DurationMilliseconds > 0");
                 DateTime dt = new DateTime(outsideTime);
                 long ticks = dt.Ticks * 10000;
 
@@ -65,7 +66,7 @@ namespace GetOutside.Database
             }
             catch
             {
-                //Toast.MakeText(Application.Context, "There are not activities saved yet", ToastLength.Short).Show();
+                //Toast.MakeText(Application.Context, "There are no activities saved yet", ToastLength.Short).Show();
                 return new TimeSpan(0);
             }
         }

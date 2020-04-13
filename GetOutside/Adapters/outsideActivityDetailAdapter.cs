@@ -5,13 +5,14 @@ using GetOutside.Core.Model;
 using GetOutside.Database;
 using System.Collections.Generic;
 using GetOutside.ViewHolders;
+using System.Globalization;
 
 namespace GetOutside
 {
     internal class outsideActivityDetailAdapter : RecyclerView.Adapter
     {
         private List<outsideActivity> _outsideActivities;
-        public SqliteDataService _dataService = new SqliteDataService();
+        private SqliteDataService _dataService = new SqliteDataService();
         public event EventHandler<int> ItemClick;
 
         public outsideActivityDetailAdapter()
@@ -27,7 +28,7 @@ namespace GetOutside
         {
             if (holder is OutsideActivityDetailViewHolder outsideActivityViewHolder)
             {
-                outsideActivityViewHolder.OutsideActivityDetailTextView.Text = _outsideActivities[position].StartTime.ToString("yyyy-MM-dd") + "  " + (TimeSpan.FromMilliseconds(_outsideActivities[position].DurationMilliseconds)).ToString();
+                outsideActivityViewHolder.OutsideActivityDetailTextView.Text = _outsideActivities[position].StartTime.ToString("yyyy-MM-dd", CultureInfo.CurrentCulture) + "  " + (TimeSpan.FromMilliseconds(_outsideActivities[position].DurationMilliseconds)).ToString();
             }
         }
 
@@ -36,10 +37,6 @@ namespace GetOutside
             View itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.outside_activity_detail_viewholder, parent, false);
             OutsideActivityDetailViewHolder outsideActivityDetailViewHolder = new OutsideActivityDetailViewHolder(itemView, OnClick);
             return outsideActivityDetailViewHolder;
-
-            //View itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.outside_activity_detail_viewholder, parent, false);
-            //OutsideActivityDetailViewHolder outsideActivityDetailViewHolder = new OutsideActivityDetailViewHolder(itemView, OnClick);
-            //return outsideActivityDetailViewHolder;
         }
 
         private void OnClick(int position)

@@ -11,6 +11,7 @@ namespace GetOutside.ViewHolders
 
         public OutsideActivityAggregationViewHolder(View itemView, Action<int> listener) : base(itemView)
         {
+            if (itemView == null) throw new ArgumentNullException(nameof(itemView));
             OutsideActivityAggregationTextView = itemView.FindViewById<TextView>(Resource.Id.outsideActivityAggregationTextView);
             ItemView.Click += (sender, e) => listener(LayoutPosition);
         }
