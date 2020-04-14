@@ -59,7 +59,7 @@ namespace GetOutside
             {
                 // Finalize OutsideActivityDatabase entry -set end time, durationMilliseconds
                 _currentOutsideActivity.EndTime = DateTime.Now;
-                TimeSpan durationMillisecondsTimeSpan = TimeSpan.Parse(_currentActivityChronometer.Text.ToString());
+                TimeSpan durationMillisecondsTimeSpan = TimeSpan.Parse(_currentActivityChronometer.Text.ToString(CultureInfo.CurrentCulture), CultureInfo.CurrentCulture);
                 _currentOutsideActivity.DurationMilliseconds = (long)durationMillisecondsTimeSpan.TotalMilliseconds;
 
                 _dataService.UpdateOutsideActivity(_currentOutsideActivity);
@@ -124,10 +124,12 @@ namespace GetOutside
                 if(outsideHours.TotalMilliseconds > 0)
                 {
                     //ResetChronometer((long)outsideHours.TotalMilliseconds);
-//                    _currentActivityChronometer.Base = SystemClock.ElapsedRealtime() - (long)outsideHours.TotalMilliseconds; //SystemClock.ElapsedRealtime();
+                    //                    _currentActivityChronometer.Base = SystemClock.ElapsedRealtime() - (long)outsideHours.TotalMilliseconds; //SystemClock.ElapsedRealtime();
 
-                    Intent intent = new Intent(this, typeof(outsideActivityAggregationActivity));
-                    StartActivity(intent);
+                    using (Intent intent = new Intent(this, typeof(outsideActivityAggregationActivity)))
+                    {
+                        StartActivity(intent);
+                    }
                     //Toast.MakeText(Application.Context, "Total outside hours: " + string.Format("{0:hh\\:mm\\:ss}", outsideHours), ToastLength.Short).Show();
                 }
                 else
@@ -245,7 +247,7 @@ namespace GetOutside
         {
             long durationMilliseconds = 0;
             // revisit this
-            TimeSpan tempTimeSpan = TimeSpan.FromMilliseconds(Convert.ToDateTime(chronoText).Millisecond);
+            TimeSpan tempTimeSpan = TimeSpan.FromMilliseconds(Convert.ToDateTime(chronoText, CultureInfo.CurrentCulture).Millisecond);
 
             String[] chronoArray = chronoText.Split(":");
             if (chronoArray.Length == 2)

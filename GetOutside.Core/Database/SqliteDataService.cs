@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Android.App;
@@ -9,7 +10,7 @@ using SQLite;
 
 namespace GetOutside.Database
 {
-    public class SqliteDataService : iLocalDataService, IDisposable
+    public sealed class SqliteDataService : iLocalDataService, IDisposable
     {
         private SQLiteConnection _database;
 
@@ -33,7 +34,7 @@ namespace GetOutside.Database
 
         public outsideActivity GetOutsideActivity(int id)
         {
-            string getOutsideActivityQuery = String.Format("select OutsideActivityId, StartTime, DurationMilliseconds,name from outsideActivity where outsideActivityId = {0} limit 1", id);
+            string getOutsideActivityQuery = string.Format(CultureInfo.CurrentCulture, "select OutsideActivityId, StartTime, DurationMilliseconds,name from outsideActivity where outsideActivityId = {0} limit 1", id);
             List<outsideActivity> outsideActivities = _database.Query<outsideActivity>(getOutsideActivityQuery);
             outsideActivity retreivedOutsideActivity = outsideActivities[0];
 

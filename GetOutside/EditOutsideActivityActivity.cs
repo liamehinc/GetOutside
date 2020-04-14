@@ -51,7 +51,7 @@ namespace GetOutside
             //outsideActivity.StartTime = new DateTime(2020, 3, 11, 08, 12, 13);
             //outsideActivity.EndTime = new DateTime(2020, 3, 11, 10, 12, 13);
             //outsideActivity.DurationMilliseconds = 7200000;
-            //currentDuration = TimeSpan.FromMilliseconds(outsideActivity.DurationMilliseconds);
+            currentDuration = TimeSpan.FromMilliseconds(outsideActivity.DurationMilliseconds);
             //outsideActivity = outsideActivities[0];
 
             FindViews();
@@ -73,21 +73,27 @@ namespace GetOutside
         private void _editOutsideActivityDurationEditText_Click(object sender, EventArgs e)
         {
             bool is24HourFormat = true;
-            TimePickerDialog timePicker = new TimePickerDialog(this, TimePickerDialog.ThemeHoloLight, this, currentDuration.Hours, currentDuration.Minutes, is24HourFormat);
-            timePicker.Show();
+            using (TimePickerDialog timePicker = new TimePickerDialog(this, TimePickerDialog.ThemeHoloLight, this, currentDuration.Hours, currentDuration.Minutes, is24HourFormat))
+            {
+                timePicker.Show();
+            }
         }
 
         private void _editOutsideActivityStartTimeEditText_Click(object sender, EventArgs e)
         {
             bool is24HourFormat = false;
-            TimePickerDialog timePicker = new TimePickerDialog(this, TimePickerDialog.ThemeHoloLight, this, outsideActivity.StartTime.Hour, outsideActivity.StartTime.Minute, is24HourFormat);
-            timePicker.Show();
+            using (TimePickerDialog timePicker = new TimePickerDialog(this, TimePickerDialog.ThemeHoloLight, this, outsideActivity.StartTime.Hour, outsideActivity.StartTime.Minute, is24HourFormat))
+            {
+                timePicker.Show();
+            }
         }
 
         private void _editOutsideActivityStartDateEditText_Click(object sender, EventArgs e)
         {
-            DatePickerDialog datePicker = new DatePickerDialog(this, this, outsideActivity.StartTime.Year, outsideActivity.StartTime.Month - 1, outsideActivity.StartTime.Day);
-            datePicker.Show();
+            using (DatePickerDialog datePicker = new DatePickerDialog(this, this, outsideActivity.StartTime.Year, outsideActivity.StartTime.Month - 1, outsideActivity.StartTime.Day))
+            {
+                datePicker.Show();
+            }
         }
 
         private void _updateOutsideActivityButton_Click(object sender, EventArgs e)
