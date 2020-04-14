@@ -207,9 +207,8 @@ namespace GetOutside
         private long convertChronometerToDuration(string chronoText)
         {
             long durationMilliseconds = 0;
+            // revisit this
             TimeSpan tempTimeSpan = TimeSpan.FromMilliseconds(Convert.ToDateTime(chronoText).Millisecond);
-            //long testDurationMilliseconds = Convert.ToInt64(TimeSpan.FromMilliseconds((Convert.ToDateTime(chronoText)).Millisecond));
-
 
             String[] chronoArray = chronoText.Split(":");
             if (chronoArray.Length == 2)
@@ -230,8 +229,6 @@ namespace GetOutside
         private void _startActivityButton_Click(object sender, EventArgs e)
         {
             // Get the base starting time and start the timer
-            //_currentActivityChronometer.Base = SystemClock.ElapsedRealtime();
-            //_currentActivityChronometer.Start();
             _currentOutsideActivity.isTracking = true;
             ResetChronometer();
             _currentOutsideActivity.StartTime = DateTime.Now;
@@ -246,8 +243,7 @@ namespace GetOutside
         {
             _currentOutsideActivity.isTracking = true;
             ResetChronometer(_currentOutsideActivity.DurationMilliseconds);
-            //_currentActivityChronometer.Base = SystemClock.ElapsedRealtime() - _currentOutsideActivity.DurationMilliseconds;
-            //_currentActivityChronometer.Start();
+
             SetResumeButtonView();
         }
 
@@ -282,50 +278,6 @@ namespace GetOutside
 
         }
 
-        //protected override void OnSaveInstanceState(Bundle outState)
-        //{
-        //    //Finalize OutsideActivityDatabase entry - set end time, durationMilliseconds, Name, done flag
-        //    _currentOutsideActivity.EndTime = DateTime.Now;
-        //    _currentOutsideActivity.DurationMilliseconds = convertChronometerToDuration(_currentActivityChronometer.Text);
-
-        //    //// write to the db
-        //    _dataService.UpdateOutsideActivity(_currentOutsideActivity);
-
-        //    base.OnSaveInstanceState(outState);
-        //}
-
-        //protected override void OnRestoreInstanceState(Bundle savedInstanceState)
-        //{
-        //    base.OnRestoreInstanceState(savedInstanceState);
-        //}
-
-        //protected override void OnPause()
-        //{
-        //    // Always call the superclass first.
-        //    base.OnPause();
-
-        //    //Update the OutsideActivityDatabase db entry to capture current durationMilliseconds
-        //    if (_currentOutsideActivity.isTracking)
-        //    {
-        //        _currentOutsideActivity.DurationMilliseconds = convertChronometerToDuration(_currentActivityChronometer.Text);
-                
-        //        //// write to the db
-        //        _dataService.UpdateOutsideActivity(_currentOutsideActivity);
-        //    }
-        //}
-
-        //protected override void OnResume()
-        //{
-        //    // Always call the superclass first.
-        //    base.OnResume();
-
-        //    if (_currentOutsideActivity.isTracking)
-        //    {
-        //        //_currentOutsideActivity.EndTime = DateTime.Now;
-        //        // reset chronometer to represent elapsed time
-        //        //_currentOutsideActivity.DurationMilliseconds = convertChronometerToDuration(_currentActivityChronometer.Text);
-        //    }
-        //}
         protected override void OnStop()
         {
             if(_currentOutsideActivity.isTracking)

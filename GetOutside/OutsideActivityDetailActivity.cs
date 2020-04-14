@@ -32,14 +32,14 @@ namespace GetOutside
         private void _outsideActivityDetailAdapter_ItemClick(object sender, int e)
         {
             // Bring up edit activity activity
-            var intent = new Intent();
-            intent.SetClass(this, typeof(EditOutsideActivityActivity));
+            //var intent = new Intent();
+            //intent.SetClass(this, typeof(EditOutsideActivityActivity));
             //outsideActivity myOutsideActivity = e.Source ;
             //sender[e]
             //intent.PutExtra("outsideActivityId",sender.o)
             //intent.PutExtra("outsideActivityName", sender._outsideActivities[e].Name);
-            intent.PutExtra("selectedOutsideActivityId", e);
-            StartActivity(intent);
+            //intent.PutExtra("selectedOutsideActivityId", e);
+            //StartActivity(intent);
         }
     }
 }

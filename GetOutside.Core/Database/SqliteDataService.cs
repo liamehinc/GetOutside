@@ -33,7 +33,7 @@ namespace GetOutside.Database
 
         public outsideActivity GetOutsideActivity(int id)
         {
-            string getOutsideActivityQuery = String.Format("select OutsideActiStartTime, DurationMilliseconds,name from outsideActivity where outsideActivityId = {0} limit 1", id);
+            string getOutsideActivityQuery = String.Format("select OutsideActivityId, StartTime, DurationMilliseconds,name from outsideActivity where outsideActivityId = {0} limit 1", id);
             List<outsideActivity> outsideActivities = _database.Query<outsideActivity>(getOutsideActivityQuery);
             outsideActivity retreivedOutsideActivity = outsideActivities[0];
 
@@ -51,14 +51,14 @@ namespace GetOutside.Database
 
         public System.Collections.Generic.List<outsideActivity> GetOutsideHoursByMonth()
         {
-            string query = "select StartTime, DurationMilliseconds from outsideActivity order by StartTime desc";
+            string query = "select StartTime, sum(DurationMilliseconds) as DurationMilliseconds from outsideActivity group by strftime('%Y-%m',date(StartTime/10000000 - 62135596800, 'unixepoch'))  order by StartTime desc";
             System.Collections.Generic.List<outsideActivity> outsideHoursByMonth = _database.Query<outsideActivity>(query);
             return outsideHoursByMonth;
         }
 
         public System.Collections.Generic.List<outsideActivity> GetOutsideHoursByDay()
         {
-            string query = "select StartTime, sum(DurationMilliseconds) as DurationMilliseconds  from outsideActivity group by strftime('%Y-%m-%d',date(StartTime/10000000 - 62135596800, 'unixepoch')) order by StartTime desc";
+            string query = "select StartTime, sum(DurationMilliseconds) as DurationMilliseconds from outsideActivity group by strftime('%Y-%m-%d',date(StartTime/10000000 - 62135596800, 'unixepoch')) order by StartTime desc";
             System.Collections.Generic.List<outsideActivity> outsideHoursByDay = _database.Query<outsideActivity>(query);
 
             return outsideHoursByDay;
