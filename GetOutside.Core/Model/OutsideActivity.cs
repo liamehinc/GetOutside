@@ -7,7 +7,7 @@ namespace GetOutside.Core.Model
 {
     public class outsideActivity
     {
-        [PrimaryKey, AutoIncrement]
+        [PrimaryKey, AutoIncrement, Column("OutsideActivityId")]
         public int OutsideActivityId { get; set; }
         public string Name { get; set; }
         public DateTime StartTime { get; set; }

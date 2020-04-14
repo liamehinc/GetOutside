@@ -1,8 +1,11 @@
-﻿namespace GetOutside.Database
+﻿using SQLite;
+using System;
+
+namespace GetOutside.Database
 {
     internal class User
     {
-        public string UserId { get; set; }
+        [PrimaryKey, AutoIncrement, Column("UserId")]
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string FullName => FirstName + " " + LastName;

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using SQLite;
+using System;
 
 namespace GetOutside.Core.Model
 {
     public class Weather
     {
+        [PrimaryKey, AutoIncrement, Column("WeatherId")]
         public int Temperature { get; set; }
         public string Units { get; set; }
         public string Precipitation { get; set; }

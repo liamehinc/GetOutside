@@ -41,15 +41,17 @@ namespace GetOutside
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.edit_outside_activity);
 
+            var selectedOutsideActivityId = Intent.Extras.GetInt("selectedOutsideActivityId");
+
             _dataService.Initialize();
-            //outsideActivities = _dataService.GetOutsideActivity();
-            outsideActivity = new outsideActivity();
+            outsideActivity = _dataService.GetOutsideActivity(selectedOutsideActivityId);
+            //outsideActivity = new outsideActivity();
             
-            outsideActivity.Name = "outsideActivity-2020032815193912";
-            outsideActivity.StartTime = new DateTime(2020, 3, 11, 08, 12, 13);
-            outsideActivity.EndTime = new DateTime(2020, 3, 11, 10, 12, 13);
-            outsideActivity.DurationMilliseconds = 7200000;
-            currentDuration = TimeSpan.FromMilliseconds(outsideActivity.DurationMilliseconds);
+            //outsideActivity.Name = "outsideActivity-2020032815193912";
+            //outsideActivity.StartTime = new DateTime(2020, 3, 11, 08, 12, 13);
+            //outsideActivity.EndTime = new DateTime(2020, 3, 11, 10, 12, 13);
+            //outsideActivity.DurationMilliseconds = 7200000;
+            //currentDuration = TimeSpan.FromMilliseconds(outsideActivity.DurationMilliseconds);
             //outsideActivity = outsideActivities[0];
 
             FindViews();

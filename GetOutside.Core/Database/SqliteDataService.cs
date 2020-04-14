@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Android.App;
@@ -22,17 +23,27 @@ namespace GetOutside.Database
             _database.Delete(outsideActivity);
         }
 
-        public System.Collections.Generic.List<outsideActivity> GetOutsideActivity()
+        public List<outsideActivity> GetOutsideActivity()
         {
+            System.Collections.Generic.List<outsideActivity> outsideActivities = new System.Collections.Generic.List<outsideActivity>();
             //            return _database.Table<outsideActivity>().ToList();
-            System.Collections.Generic.List<outsideActivity> outsideActivities = _database.Query<outsideActivity>("select StartTime, DurationMilliseconds,name from outsideActivity order by StartTime desc");
+            outsideActivities = _database.Query<outsideActivity>("select StartTime, DurationMilliseconds,name from outsideActivity order by StartTime desc");
             return outsideActivities;
         }
 
-        public outsideActivity GetLatestInProgressOutsideActivity()
+        public outsideActivity GetOutsideActivity(int id)
+        {
+            string getOutsideActivityQuery = String.Format("select OutsideActiStartTime, DurationMilliseconds,name from outsideActivity where outsideActivityId = {0} limit 1", id);
+            List<outsideActivity> outsideActivities = _database.Query<outsideActivity>(getOutsideActivityQuery);
+            outsideActivity retreivedOutsideActivity = outsideActivities[0];
+
+            return retreivedOutsideActivity;
+        }
+
+        public outsideActivity GetLatestOutsideActivity()
         {
             //            return _database.Table<outsideActivity>().ToList();
-            string query = "select StartTime, DurationMilliseconds,Done,datetime('now') from outsideActivity where date(StartTime/ 10000000 - 62135596800,'unixepoch') > date('now', '-1 day') AND done = false order by StartTime desc limit 1";
+            string query = "select OutsideActivityId, Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, YearMonth, isTracking from outsideActivity order by StartTime desc limit 1";
             System.Collections.Generic.List<outsideActivity> outsideActivities = _database.Query<outsideActivity>(query);
 
             return outsideActivities[0];
@@ -40,7 +51,7 @@ namespace GetOutside.Database
 
         public System.Collections.Generic.List<outsideActivity> GetOutsideHoursByMonth()
         {
-            string query = "select StartTime, sum(DurationMilliseconds) as DurationMilliseconds  from outsideActivity group by strftime('%Y-%m',date(StartTime/10000000 - 62135596800, 'unixepoch')) order by StartTime desc";
+            string query = "select StartTime, DurationMilliseconds from outsideActivity order by StartTime desc";
             System.Collections.Generic.List<outsideActivity> outsideHoursByMonth = _database.Query<outsideActivity>(query);
             return outsideHoursByMonth;
         }
@@ -79,8 +90,20 @@ namespace GetOutside.Database
                 _database = new SQLiteConnection(dbPath);
             }
 
+            // Create the user table if necessary
             _database.CreateTable<User>();
-            _database.CreateTable<outsideActivity>();
+
+            // check if outsideActivity table auto populates outsideActivityId column. If not, re-create table with auto populate outsideActivityId column
+            string outsideActivityIdColumnIsNullQuery = "SELECT count(outsideActivityId) FROM outsideActivity where OutsideActivityId is not null";
+            Int64 outsideActivityIdNullCount = _database.ExecuteScalar<Int64>(outsideActivityIdColumnIsNullQuery);
+
+            if (outsideActivityIdNullCount == 0)
+            {
+                string sqlQuery = "BEGIN TRANSACTION; CREATE TEMPORARY TABLE OutsideActivity_backup(Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, YearMonth, isTracking); INSERT INTO OutsideActivity_backup SELECT (Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, YearMonth, isTracking) FROM OutsideActivity; DROP TABLE OutsideActivity; CREATE TABLE OutsideActivity(OutsideActivityId INTEGER PRIMARY KEY, Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, YearMonth, isTracking); INSERT INTO OutsideActivity SELECT (Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, YearMonth, isTracking) FROM OutsideActivity_backup; DROP TABLE OutsideActivity_backup; COMMIT; ";
+                _database.Query<outsideActivity>(sqlQuery);
+            }
+            //_database.CreateTable<outsideActivity>();
+
         }
 
         public void UpdateOutsideActivity(outsideActivity outsideActivity)
@@ -92,5 +115,6 @@ namespace GetOutside.Database
         {
             ((IDisposable)_database).Dispose();
         }
+
     }
 }
