@@ -28,18 +28,25 @@ namespace GetOutside
             _outsideActivityDetailAdapter.ItemClick += _outsideActivityDetailAdapter_ItemClick;
             _outsideActivityDetailRecyclerView.SetAdapter(_outsideActivityDetailAdapter);
         }
+        protected override void OnStart()
+        {
+            base.OnStart();
+            _outsideActivityDetailRecyclerView = FindViewById<RecyclerView>(Resource.Id.outsideActivityDetailRecyclerView);
+        }
 
         private void _outsideActivityDetailAdapter_ItemClick(object sender, int e)
         {
             // Bring up edit activity activity
-            //var intent = new Intent();
-            //intent.SetClass(this, typeof(EditOutsideActivityActivity));
-            //outsideActivity myOutsideActivity = e.Source ;
-            //sender[e]
-            //intent.PutExtra("outsideActivityId",sender.o)
-            //intent.PutExtra("outsideActivityName", sender._outsideActivities[e].Name);
-            //intent.PutExtra("selectedOutsideActivityId", e);
-            //StartActivity(intent);
+            using (var intent = new Intent())
+            {
+                intent.SetClass(this, typeof(EditOutsideActivityActivity));
+                //outsideActivity myOutsideActivity = e.Source ;
+                //sender[e]
+                //intent.PutExtra("outsideActivityId",sender.o)
+                //intent.PutExtra("outsideActivityName", sender._outsideActivities[e].Name);
+                intent.PutExtra("selectedOutsideActivityId", e);
+                StartActivity(intent);
+            }
         }
     }
 }

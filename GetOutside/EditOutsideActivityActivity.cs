@@ -31,6 +31,7 @@ namespace GetOutside
 
         private Button _updateOutsideActivityButton;
 
+        private List<outsideActivity> outsideActivities;
         private outsideActivity outsideActivity;
 
         private SqliteDataService _dataService = new SqliteDataService();
@@ -44,8 +45,8 @@ namespace GetOutside
             var selectedOutsideActivityId = Intent.Extras.GetInt("selectedOutsideActivityId");
 
             _dataService.Initialize();
-            outsideActivity = _dataService.GetOutsideActivity(selectedOutsideActivityId);
-            //outsideActivity = new outsideActivity();
+            outsideActivities = _dataService.GetOutsideActivity();
+            outsideActivity = outsideActivities[selectedOutsideActivityId];
             
             //outsideActivity.Name = "outsideActivity-2020032815193912";
             //outsideActivity.StartTime = new DateTime(2020, 3, 11, 08, 12, 13);
@@ -117,7 +118,8 @@ namespace GetOutside
             outsideActivity.DurationMilliseconds = (long) newDuration.TotalMilliseconds;
 
             // update the outdoor activity
-            //_dataService.UpdateOutsideActivity(outsideActivity);
+            _dataService.UpdateOutsideActivity(outsideActivity);
+            Finish();
         }
 
         private void FindViews()

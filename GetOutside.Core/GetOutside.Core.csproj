@@ -24,10 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repository\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\..\GetOutside\GetOutside\GetOutside.Android\Resources\mipmap-xxxhdpi\icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
