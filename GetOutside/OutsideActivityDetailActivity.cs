@@ -36,6 +36,11 @@ namespace GetOutside
 
             _outsideActivityDetailRecyclerView = FindViewById<RecyclerView>(Resource.Id.outsideActivityDetailRecyclerView);
         }
+        protected override void OnStart()
+        {
+            base.OnStart();
+            _outsideActivityDetailRecyclerView = FindViewById<RecyclerView>(Resource.Id.outsideActivityDetailRecyclerView);
+        }
 
         private void _outsideActivityDetailAdapter_ItemClick(object sender, int e)
         {
