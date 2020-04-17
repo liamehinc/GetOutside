@@ -30,6 +30,7 @@ namespace GetOutside
         TimeSpan newDuration;
 
         private Button _updateOutsideActivityButton;
+        private Button _deleteOutsideActivityButton;
 
         private List<outsideActivity> outsideActivities;
         private outsideActivity outsideActivity;
@@ -68,7 +69,14 @@ namespace GetOutside
             _editOutsideActivityStartDateEditText.Click += _editOutsideActivityStartDateEditText_Click; ;
             _editOutsideActivityStartTimeEditText.Click += _editOutsideActivityStartTimeEditText_Click; ;
             _updateOutsideActivityButton.Click += _updateOutsideActivityButton_Click;
+            _deleteOutsideActivityButton.Click += _deleteOutsideActivityButton_Click;
 
+        }
+
+        private void _deleteOutsideActivityButton_Click(object sender, EventArgs e)
+        {
+            _dataService.DeleteOutsideActivity(outsideActivity);
+            Finish();
         }
 
         private void _editOutsideActivityDurationEditText_Click(object sender, EventArgs e)
@@ -129,7 +137,8 @@ namespace GetOutside
             _editOutsideActivityStartDateEditText = FindViewById<EditText>(Resource.Id.editOutsideActivityStartDateEditText);
             _editOutsideActivityStartTimeEditText = FindViewById<EditText>(Resource.Id.editOutsideActivityStartTimeEditText);
             _editOutsideActivityDurationTimePicker = FindViewById<TimePicker>(Resource.Id.editOutsideActivityDurationTimePicker);
-            _updateOutsideActivityButton = FindViewById<Button>(Resource.Id.updateOutsideActivityButton);            
+            _updateOutsideActivityButton = FindViewById<Button>(Resource.Id.updateOutsideActivityButton);
+            _deleteOutsideActivityButton = FindViewById<Button>(Resource.Id.deleteOutsideActivityButton);
             
             // set default values for data entry fields based on outdoorAcivity
             _editOutsideActivityNameEditText.SetText(outsideActivity.Name, TextView.BufferType.Editable);

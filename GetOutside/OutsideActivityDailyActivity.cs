@@ -18,6 +18,12 @@ namespace GetOutside
             base.OnCreate(savedInstanceState);
 
             // Create your application here
+           
+        }
+
+        protected override void OnStart()
+        {
+            base.OnStart();
             SetContentView(Resource.Layout.outside_activity_daily);
             _outsideActivityDailyRecyclerView = FindViewById<RecyclerView>(Resource.Id.outsideActivityDailyRecyclerView);
 
@@ -27,7 +33,6 @@ namespace GetOutside
             _outsideActivityDailyAdapter.ItemClick += _outsideActivityDailyAdapter_ItemClick;
             _outsideActivityDailyRecyclerView.SetAdapter(_outsideActivityDailyAdapter);
         }
-
         private void _outsideActivityDailyAdapter_ItemClick(object sender, int e)
         {
             using (var intent = new Intent())

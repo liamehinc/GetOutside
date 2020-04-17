@@ -62,5 +62,13 @@
         android:textColor="@color/outsideBrown"
         android:backgroundTint="@color/springGreen"
         android:id="@+id/updateOutsideActivityButton" />
-   
+    <Button
+        android:text="Delete Activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/deleteOutsideActivityButton"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/outsideBrown"
+        android:backgroundTint="@color/aspenYellow"
+        />
 </LinearLayout>

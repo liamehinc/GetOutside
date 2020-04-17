@@ -12,11 +12,17 @@ namespace GetOutside
     {
         private RecyclerView _outsideActivityDetailRecyclerView;
         private RecyclerView.LayoutManager _outsideActivityLayoutManager;
-        private outsideActivityDetailAdapter _outsideActivityDetailAdapter;
+        private OutsideActivityDetailAdapter _outsideActivityDetailAdapter;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            
+        }
+        protected override void OnStart()
+        {
+            base.OnStart();
 
             // Create your application here
             SetContentView(Resource.Layout.outside_activity_detail);
@@ -24,13 +30,10 @@ namespace GetOutside
 
             _outsideActivityLayoutManager = new LinearLayoutManager(this);
             _outsideActivityDetailRecyclerView.SetLayoutManager(_outsideActivityLayoutManager);
-            _outsideActivityDetailAdapter = new outsideActivityDetailAdapter();
+            _outsideActivityDetailAdapter = new OutsideActivityDetailAdapter();
             _outsideActivityDetailAdapter.ItemClick += _outsideActivityDetailAdapter_ItemClick;
             _outsideActivityDetailRecyclerView.SetAdapter(_outsideActivityDetailAdapter);
-        }
-        protected override void OnStart()
-        {
-            base.OnStart();
+
             _outsideActivityDetailRecyclerView = FindViewById<RecyclerView>(Resource.Id.outsideActivityDetailRecyclerView);
         }
 

@@ -9,18 +9,17 @@ using System.Globalization;
 
 namespace GetOutside
 {
-    internal class outsideActivityDetailAdapter : RecyclerView.Adapter
+    internal class OutsideActivityDetailAdapter : RecyclerView.Adapter
     {
         private List<outsideActivity> _outsideActivities;
         private SqliteDataService _dataService = new SqliteDataService();
         public event EventHandler<int> ItemClick;
 
-        public outsideActivityDetailAdapter()
+        public OutsideActivityDetailAdapter()
         {
             _dataService.Initialize();
             _outsideActivities = _dataService.GetOutsideActivity();
- 
-        }
+         }
 
         public override int ItemCount => _outsideActivities.Count;
 

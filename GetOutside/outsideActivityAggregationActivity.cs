@@ -18,6 +18,13 @@ namespace GetOutside
             base.OnCreate(savedInstanceState);
 
             // Create your application here
+            
+        }
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+
             SetContentView(Resource.Layout.outside_activity_aggregation);
             _outsideActivityRecyclerView = FindViewById<RecyclerView>(Resource.Id.outsideActivityRecyclerView);
 
@@ -27,7 +34,6 @@ namespace GetOutside
             _outsideActivityAggregationAdapter.ItemClick += _outsideActivityAggregationAdapter_ItemClick;
             _outsideActivityRecyclerView.SetAdapter(_outsideActivityAggregationAdapter);
         }
-
         private void _outsideActivityAggregationAdapter_ItemClick(object sender, int e)
         {
             using (var intent = new Intent())
