@@ -11,7 +11,7 @@ namespace GetOutside
 {
     internal class OutsideActivityDetailAdapter : RecyclerView.Adapter
     {
-        private List<outsideActivity> _outsideActivities;
+        private List<OutsideActivity> _outsideActivities;
         private SqliteDataService _dataService = new SqliteDataService();
         public event EventHandler<int> ItemClick;
 

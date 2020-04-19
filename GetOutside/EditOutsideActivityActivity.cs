@@ -32,8 +32,8 @@ namespace GetOutside
         private Button _updateOutsideActivityButton;
         private Button _deleteOutsideActivityButton;
 
-        private List<outsideActivity> outsideActivities;
-        private outsideActivity outsideActivity;
+        private List<OutsideActivity> outsideActivities;
+        private OutsideActivity outsideActivity;
 
         private SqliteDataService _dataService = new SqliteDataService();
 
@@ -108,7 +108,7 @@ namespace GetOutside
         private void _updateOutsideActivityButton_Click(object sender, EventArgs e)
         {
             // set isTracking and Done
-            outsideActivity.isTracking = false;
+            outsideActivity.IsTracking = false;
             outsideActivity.Done = true;
 
             // determine the new duration of the activity

@@ -15,7 +15,7 @@ using GetOutside.Database;
 
 namespace GetOutside
 {
-    [Activity(Label = "ManualOutsideEntryActivity", Theme = "@style/AppTheme", MainLauncher = true)]
+    [Activity(Label = "ManualOutsideEntryActivity", Theme = "@style/AppTheme")]
     public class ManualOutsideEntryActivity : Activity
     {
         private SqliteDataService _dataService = new SqliteDataService();
@@ -25,7 +25,7 @@ namespace GetOutside
 
         private DatePicker _dateOfActivityDatePicker;
         private NumberPicker _hoursToAddNumberPicker;
-        private outsideActivity _newOutsideActivity = new outsideActivity();
+        private OutsideActivity _newOutsideActivity = new OutsideActivity();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -63,6 +63,7 @@ namespace GetOutside
         {
             // Get the base starting time and start the timer
             _newOutsideActivity.Done = true;
+            _newOutsideActivity.IsTracking = false;
             
             _newOutsideActivity.StartTime = _dateOfActivityDatePicker.DateTime;
             _newOutsideActivity.DurationMilliseconds = _hoursToAddNumberPicker.Value * 3600000;
@@ -71,7 +72,10 @@ namespace GetOutside
             _newOutsideActivity.EndTime = _newOutsideActivity.StartTime.AddMilliseconds(_newOutsideActivity.DurationMilliseconds);
 
             _dataService.CreateOutsideActivity(_newOutsideActivity);
-            base.OnBackPressed();
+            //base.OnBackPressed();
+            string toastMessage = String.Format("Inserted {0} activity", _newOutsideActivity.Name);
+            Toast.MakeText(Application.Context, toastMessage, ToastLength.Short).Show();
+            Finish();
         }
 
         private void FindViews()

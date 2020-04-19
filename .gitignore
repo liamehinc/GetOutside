@@ -338,3 +338,5 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/GetOutsideDatabase-2020-04-19.db3
+/GetOutsideDatabase-2020-04-14.db3

@@ -11,7 +11,7 @@ namespace GetOutside.Adapters
 {
     public class outsideActivityAggregationAdapter : RecyclerView.Adapter
     {
-        private List<outsideActivity> _outsideActivitiesByMonth;
+        private List<OutsideActivity> _outsideActivitiesByMonth;
         private SqliteDataService _dataService = new SqliteDataService();
         public event EventHandler<int> ItemClick;
 

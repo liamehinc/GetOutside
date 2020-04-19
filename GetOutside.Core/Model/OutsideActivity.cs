@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GetOutside.Core.Model
 {
-    public class outsideActivity
+    public class OutsideActivity
     {
         [PrimaryKey, AutoIncrement, Column("OutsideActivityId")]
         public int OutsideActivityId { get; set; }
@@ -18,7 +18,14 @@ namespace GetOutside.Core.Model
         public int UserId { get; set; }
         public string Notes { get; set; }
         public bool Done { get; set; }
-        public bool isTracking { get; set; }
+        public bool IsTracking { get; set; }
+
+
+        public OutsideActivity()
+        {
+            IsTracking = false;
+            Done = false;
+        }
 
     }
 }
