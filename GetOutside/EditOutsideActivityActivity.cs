@@ -43,18 +43,22 @@ namespace GetOutside
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.edit_outside_activity);
 
-            var selectedOutsideActivityId = Intent.Extras.GetInt("selectedOutsideActivityId");
-
             _dataService.Initialize();
-            outsideActivities = _dataService.GetOutsideActivity();
-            outsideActivity = outsideActivities[selectedOutsideActivityId];
-            
-            //outsideActivity.Name = "outsideActivity-2020032815193912";
-            //outsideActivity.StartTime = new DateTime(2020, 3, 11, 08, 12, 13);
-            //outsideActivity.EndTime = new DateTime(2020, 3, 11, 10, 12, 13);
-            //outsideActivity.DurationMilliseconds = 7200000;
-            currentDuration = TimeSpan.FromMilliseconds(outsideActivity.DurationMilliseconds);
-            //outsideActivity = outsideActivities[0];
+
+            try
+            {
+                var selectedOutsideActivityId = Intent.Extras.GetInt("selectedOutsideActivityId");
+
+                outsideActivities = _dataService.GetOutsideActivity();
+                outsideActivity = outsideActivities[selectedOutsideActivityId];
+                currentDuration = TimeSpan.FromMilliseconds(outsideActivity.DurationMilliseconds);
+            }
+            catch (System.NullReferenceException)
+            {
+                outsideActivity = new OutsideActivity();
+                outsideActivity.StartTime = DateTime.Now.AddHours(-2);
+                _dataService.CreateOutsideActivity(outsideActivity);
+            }
 
             FindViews();
             LinkEventHandlers(); 
@@ -66,7 +70,7 @@ namespace GetOutside
                 outsideActivity.Name = e.Text.ToString();
             };
 
-            _editOutsideActivityStartDateEditText.Click += _editOutsideActivityStartDateEditText_Click; ;
+            _editOutsideActivityStartDateEditText.Click += _editOutsideActivityStartDateEditText_Click;
             _editOutsideActivityStartTimeEditText.Click += _editOutsideActivityStartTimeEditText_Click; ;
             _updateOutsideActivityButton.Click += _updateOutsideActivityButton_Click;
             _deleteOutsideActivityButton.Click += _deleteOutsideActivityButton_Click;
@@ -107,8 +111,9 @@ namespace GetOutside
 
         private void _updateOutsideActivityButton_Click(object sender, EventArgs e)
         {
+            string toastMessage;
+
             // set isTracking and Done
-            outsideActivity.IsTracking = false;
             outsideActivity.Done = true;
 
             // determine the new duration of the activity
@@ -125,8 +130,20 @@ namespace GetOutside
             // set durationMilliseconds
             outsideActivity.DurationMilliseconds = (long) newDuration.TotalMilliseconds;
 
-            // update the outdoor activity
-            _dataService.UpdateOutsideActivity(outsideActivity);
+            // update or add the outdoor activity
+            if (outsideActivity.OutsideActivityId == 0)
+            {
+                _dataService.CreateOutsideActivity(outsideActivity);
+                toastMessage = String.Format("Inserted {0} activity", outsideActivity.Name);
+            }
+            else
+            {
+                _dataService.UpdateOutsideActivity(outsideActivity);
+                toastMessage = String.Format("Updated {0} activity", outsideActivity.Name); 
+            }
+
+            // close this intent
+            Toast.MakeText(Application.Context, toastMessage, ToastLength.Short).Show();
             Finish();
         }
 

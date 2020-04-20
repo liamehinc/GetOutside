@@ -31,11 +31,6 @@ namespace GetOutside
         private static string TOTALOUTSIDETIME = "Total Outside Time";
         private static string CURRENTOUTSIDETIME = "Current Outside Time";
         private static string NEWACTIVITYORPREVIOUSACTIVITY = "You can either create a new activity or enter previous activities";
-        //private static string ENDTIME = "endTime";
-        //private static string DURATIONMILLISECONDS = "durationMilliseconds";
-        //private static string ISTRACKING = "isTracking";
-        //private static string DONE = "Done";
-        //private Button _recordHoursButton;
 
         private OutsideActivity _currentOutsideActivity = new OutsideActivity();
 
@@ -49,52 +44,61 @@ namespace GetOutside
 
             FindViews();
             LinkEventHandlers();
-            SetSaveButtonView();
-        }
-
-
-        protected override void OnStop()
-        {
-            if (_currentOutsideActivity.IsTracking)
-            {
-                // Finalize OutsideActivityDatabase entry -set end time, durationMilliseconds
-                _currentOutsideActivity.EndTime = DateTime.Now;
-                TimeSpan durationMillisecondsTimeSpan = TimeSpan.Parse(_currentActivityChronometer.Text.ToString(CultureInfo.CurrentCulture), CultureInfo.CurrentCulture) / 60;
-                _currentOutsideActivity.DurationMilliseconds = convertChronometerToDuration(_currentActivityChronometer.Text.ToString(CultureInfo.CurrentCulture));
-                //_currentOutsideActivity.DurationMilliseconds = (long)durationMillisecondsTimeSpan.TotalMilliseconds;
-
-                _dataService.UpdateOutsideActivity(_currentOutsideActivity);
-            }
-            base.OnStop();
+            SetSaveActivityView();
         }
 
         protected override void OnStart()
         {
             base.OnStart();
-            _currentOutsideActivity = _dataService.GetLatestOutsideActivity();
-            
-            // remove these 2 lines
-            //_currentOutsideActivity.DurationMilliseconds = 3580000;
-            //_currentOutsideActivity.IsTracking = true;
 
-            if (_currentOutsideActivity != null && _currentOutsideActivity.IsTracking)
+            // if there isn't a current activity that's not done, check if there is an incomplete activity in the DB
+            if (_currentOutsideActivity.OutsideActivityId == 0)
             {
-                TimeSpan durationMillisecondsTimeSpan = new TimeSpan(_currentOutsideActivity.DurationMilliseconds);
-                TimeSpan currentActivityTimeSpan = _currentOutsideActivity.EndTime.Subtract(_currentOutsideActivity.StartTime);
-                currentActivityTimeSpan = currentActivityTimeSpan.Subtract(durationMillisecondsTimeSpan);
+                _currentOutsideActivity = _dataService.GetLatestOutsideActivity();
+            }
+            
+            // reset the chronometer and views
+            if (_currentOutsideActivity.IsTracking || !(_currentOutsideActivity.Done))
+            {
+                //TimeSpan durationMillisecondsTimeSpan = new TimeSpan(_currentOutsideActivity.DurationMilliseconds);
+                long newChronometerBaseOffset;
 
+                // Reset the chronometer to the correct duration value accounting for time running in the background
+                if (_currentOutsideActivity.IsPaused)
+                {
+                    // timer was paused in the background
+                    newChronometerBaseOffset = (long)TimeSpan.FromMilliseconds(_currentOutsideActivity.DurationMilliseconds).TotalMilliseconds;
+                    SetPauseActivityView();
+                }
+                else
+                {
+                    // timer was running in the background
+                    TimeSpan currentActivityTimeSpan = _currentOutsideActivity.EndTime.Subtract(_currentOutsideActivity.StartTime);
+                    TimeSpan timeSinceEndTimeRecorded = DateTime.Now - _currentOutsideActivity.EndTime;
+                    newChronometerBaseOffset = (long)currentActivityTimeSpan.Add(timeSinceEndTimeRecorded).TotalMilliseconds;
+                    SetActivityTimingView();
+                }
+                
                 // Reset the Chronometer to account for a running activity
-                TimeSpan timeSinceEndTimeRecorded = DateTime.Now - _currentOutsideActivity.EndTime;
-                long newChronometerBaseOffset = (long)currentActivityTimeSpan.Add(timeSinceEndTimeRecorded).TotalMilliseconds;
-
-                ResetChronometer(newChronometerBaseOffset, true);
-                SetStartButtonView();
+                ResetChronometer(newChronometerBaseOffset, _currentOutsideActivity.IsPaused);
             }
             else
             {
                 ResetChronometer();
             }
         }
+
+        protected override void OnStop()
+        {
+            // only need to update the activity in DB if it isn't paused
+            if (_currentOutsideActivity.IsTracking && !_currentOutsideActivity.IsPaused)
+            {
+                // Finalize OutsideActivityDatabase entry -set end time, durationMilliseconds
+                _updateCurrentActivity();
+            }
+            base.OnStop();
+        }
+
         private void LinkEventHandlers()
         {
             _startActivityButton.Click += _startActivityButton_Click;
@@ -110,14 +114,16 @@ namespace GetOutside
         {
             // reset the chronometer
             _currentActivityChronometer.Stop();
+            _currentOutsideActivity.IsPaused = true;
             _currentOutsideActivity.IsTracking = false;
             ResetChronometer();
 
-            // delete the outside activity from the database
+            // delete the outside activity from the database and reset the outside activity
             _dataService.DeleteOutsideActivity(_currentOutsideActivity);
+            _currentOutsideActivity = new OutsideActivity();
 
             // reset the view
-            SetDiscardButtonView();
+            SetSaveActivityView();
         }
 
         private void _viewOutsideHoursButton_Click(object sender, EventArgs e)
@@ -128,14 +134,10 @@ namespace GetOutside
                 TimeSpan outsideHours = _dataService.GetOutsideHours();
                 if(outsideHours.TotalMilliseconds > 0)
                 {
-                    //ResetChronometer((long)outsideHours.TotalMilliseconds);
-                    //                    _currentActivityChronometer.Base = SystemClock.ElapsedRealtime() - (long)outsideHours.TotalMilliseconds; //SystemClock.ElapsedRealtime();
-
                     using (Intent intent = new Intent(this, typeof(outsideActivityAggregationActivity)))
                     {
                         StartActivity(intent);
                     }
-                    //Toast.MakeText(Application.Context, "Total outside hours: " + string.Format("{0:hh\\:mm\\:ss}", outsideHours), ToastLength.Short).Show();
                 }
                 else
                 {
@@ -155,7 +157,7 @@ namespace GetOutside
             _currentActivityTextView.Text = TOTALOUTSIDETIME;
         }
 
-        private void SetStartButtonView()
+        private void SetActivityTimingView()
         {
             // update textView for outside activity time
             _currentActivityTextView.Text = CURRENTOUTSIDETIME;
@@ -169,19 +171,8 @@ namespace GetOutside
             _saveActivityButton.Visibility = ViewStates.Visible;
             _viewOutsideHoursButton.Visibility = ViewStates.Invisible;
         }
-
-        private void SetResumeButtonView()
-        {
-            _startActivityButton.Visibility = ViewStates.Invisible;
-            _addActivityButton.Visibility = ViewStates.Invisible;
-            _discardActivityButton.Visibility = ViewStates.Visible;
-            _pauseActivityButton.Visibility = ViewStates.Visible;
-            _resumeActivityButton.Visibility = ViewStates.Invisible;
-            _saveActivityButton.Visibility = ViewStates.Visible;
-            _viewOutsideHoursButton.Visibility = ViewStates.Invisible;
-        }
-        
-        private void SetPauseButtonView()
+      
+        private void SetPauseActivityView()
         {
             _startActivityButton.Visibility = ViewStates.Invisible;
             _addActivityButton.Visibility = ViewStates.Invisible;
@@ -192,19 +183,7 @@ namespace GetOutside
             _viewOutsideHoursButton.Visibility = ViewStates.Invisible;
         }
 
-        private void SetSaveButtonView()
-        {
-            _startActivityButton.Visibility = ViewStates.Visible;
-            _addActivityButton.Visibility = ViewStates.Visible;
-            _discardActivityButton.Visibility = ViewStates.Invisible;
-            _viewOutsideHoursButton.Visibility = ViewStates.Visible;
-            _pauseActivityButton.Visibility = ViewStates.Invisible;
-            _resumeActivityButton.Visibility = ViewStates.Invisible;
-            _saveActivityButton.Visibility = ViewStates.Invisible;
-
-        }
-
-        private void SetDiscardButtonView()
+        private void SetSaveActivityView()
         {
             _startActivityButton.Visibility = ViewStates.Visible;
             _addActivityButton.Visibility = ViewStates.Visible;
@@ -219,45 +198,46 @@ namespace GetOutside
         private void _pauseActivityButton_Click(object sender, EventArgs e)
         {
             _currentActivityChronometer.Stop();
-            _currentOutsideActivity.DurationMilliseconds = SystemClock.ElapsedRealtime() - _currentActivityChronometer.Base;
-            _currentOutsideActivity.IsTracking = false;
-            _dataService.UpdateOutsideActivity(_currentOutsideActivity);
-            SetPauseButtonView();
+            _currentOutsideActivity.IsPaused = true;
+            _updateCurrentActivity();
+            SetPauseActivityView();
         }
 
-        private void _saveActivityButton_Click(object sender, EventArgs e)
+        private void _updateCurrentActivity()
         {
-            _currentActivityChronometer.Stop();
-
             //Finalize OutsideActivityDatabase entry - set end time, durationMilliseconds, Name, done flag
             //_currentOutsideActivity.StartTime = new DateTime(2020, 3, 11, 20, 12, 13);
             //_currentOutsideActivity.EndTime = new DateTime(2020, 3, 11, 22, 12, 13);
             //_currentOutsideActivity.DurationMilliseconds = 7200000;
 
             _currentOutsideActivity.EndTime = DateTime.Now;
-           _currentOutsideActivity.DurationMilliseconds = convertChronometerToDuration(_currentActivityChronometer.Text.ToString(CultureInfo.CurrentCulture));
+            _currentOutsideActivity.DurationMilliseconds = convertChronometerToDuration(_currentActivityChronometer.Text.ToString(CultureInfo.CurrentCulture));
 
-            TimeSpan durationMillisecondsTimeSpan;
-            if (!TimeSpan.TryParse(_currentActivityChronometer.Text.ToString(CultureInfo.CurrentCulture), out durationMillisecondsTimeSpan))
+            // Convert the duration of the activity to a TimeSpan
+            if (!TimeSpan.TryParse(_currentActivityChronometer.Text.ToString(CultureInfo.CurrentCulture), out TimeSpan durationMillisecondsTimeSpan))
             {
                 // handle the validation error
-
             }
-
             else
-            {// acount for Chronometer resolution
-             //long durationMilliseconds = (long) durationMillisecondsTimeSpan.TotalMilliseconds / 60;
-
+            {
                 durationMillisecondsTimeSpan = TimeSpan.Parse(_currentActivityChronometer.Text.ToString(CultureInfo.CurrentCulture), CultureInfo.CurrentCulture);
-                //_currentOutsideActivity.DurationMilliseconds = (long)durationMillisecondsTimeSpan.TotalMilliseconds;
             }
-
-            _currentOutsideActivity.Done = true;
-            _currentOutsideActivity.IsTracking = false;
 
             // write to the db
             _dataService.UpdateOutsideActivity(_currentOutsideActivity);
-            SetSaveButtonView();
+        }
+
+        private void _saveActivityButton_Click(object sender, EventArgs e)
+        {
+            _currentActivityChronometer.Stop();
+
+            _currentOutsideActivity.Done = true;
+            _currentOutsideActivity.IsTracking = false;
+            _currentOutsideActivity.IsPaused = false;
+
+            // write to the db
+            _updateCurrentActivity();
+            SetSaveActivityView();
 
             // toast to notify activity was saved.
             DateTime dt = new DateTime(_currentOutsideActivity.DurationMilliseconds);
@@ -291,36 +271,37 @@ namespace GetOutside
         private void _startActivityButton_Click(object sender, EventArgs e)
         {
             // Get the base starting time and start the timer
-            _currentOutsideActivity.IsTracking = true;
-            ResetChronometer(0, true);
+            _currentOutsideActivity = new OutsideActivity(true);
+            ResetChronometer();
             _currentOutsideActivity.StartTime = DateTime.Now;
             _currentOutsideActivity.Name = "outsideActivity-" + _currentOutsideActivity.StartTime.ToString("yyyyMMddHHmmssff", CultureInfo.CurrentCulture);
 
             _dataService.CreateOutsideActivity(_currentOutsideActivity);
 
-            SetStartButtonView();
+            SetActivityTimingView();
         }
 
         private void _resumeActivityButton_Click(object sender, EventArgs e)
         {
             _currentOutsideActivity.IsTracking = true;
-            ResetChronometer(_currentOutsideActivity.DurationMilliseconds, true);
+            _currentOutsideActivity.IsPaused = false;
+            ResetChronometer(_currentOutsideActivity.DurationMilliseconds, _currentOutsideActivity.IsPaused);
 
-            SetResumeButtonView();
+            SetActivityTimingView();
         }
 
         private void _addActivityButton_Click(object sender, EventArgs e)
         {
-            using (Intent manualOutsideEntryActivityIntent = new Intent(this, typeof(ManualOutsideEntryActivity)))
+            using (Intent editOutsideActivityIntent = new Intent(this, typeof(EditOutsideActivityActivity)))
             {
-                StartActivity(manualOutsideEntryActivityIntent);
+                StartActivity(editOutsideActivityIntent);
             }
         }
 
-        private void ResetChronometer(long currentDuration = 0, bool isTracking = false)
+        private void ResetChronometer(long currentDuration = 0, bool isPaused = false)
         {
             _currentActivityChronometer.Base = SystemClock.ElapsedRealtime() - currentDuration;
-            if (isTracking)
+            if (_currentOutsideActivity.IsTracking && !_currentOutsideActivity.IsPaused)
             {
                 _currentActivityChronometer.Start();
             }
@@ -337,7 +318,6 @@ namespace GetOutside
             _currentActivityChronometer = FindViewById<Chronometer>(Resource.Id.currentActivityChronometer);
             _viewOutsideHoursButton = FindViewById<Button>(Resource.Id.viewOutsideHoursButton);
             _currentActivityTextView = FindViewById<TextView>(Resource.Id.currentActivityTextView);
-
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)

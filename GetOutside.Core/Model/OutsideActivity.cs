@@ -19,11 +19,20 @@ namespace GetOutside.Core.Model
         public string Notes { get; set; }
         public bool Done { get; set; }
         public bool IsTracking { get; set; }
+        public bool IsPaused { get; set; }
 
 
         public OutsideActivity()
         {
             IsTracking = false;
+            IsPaused = false;
+            Done = false;
+        }
+
+        public OutsideActivity(bool isTracking = false)
+        {
+            IsTracking = isTracking;
+            IsPaused = false;
             Done = false;
         }
 

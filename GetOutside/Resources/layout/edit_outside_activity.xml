@@ -45,7 +45,7 @@
 
     <TextView
         android:id="@+id/editOutsideActivityDurationTextView"
-        android:text="Outside Activity Duration"
+        android:text="Outside Activity Duration (hh:mm)"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <TimePicker
@@ -56,7 +56,7 @@
         />
     
     <Button
-        android:text="Update Outside Activity"
+        android:text="Add or Update Outside Activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/outsideBrown"
