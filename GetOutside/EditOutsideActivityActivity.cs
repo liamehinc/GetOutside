@@ -71,16 +71,34 @@ namespace GetOutside
             };
 
             _editOutsideActivityStartDateEditText.Click += _editOutsideActivityStartDateEditText_Click;
-            _editOutsideActivityStartTimeEditText.Click += _editOutsideActivityStartTimeEditText_Click; ;
+            _editOutsideActivityStartTimeEditText.Click += _editOutsideActivityStartTimeEditText_Click;
             _updateOutsideActivityButton.Click += _updateOutsideActivityButton_Click;
-            _deleteOutsideActivityButton.Click += _deleteOutsideActivityButton_Click;
+            // popup dialog to confirm activity should be deleted
+            _deleteOutsideActivityButton.Click += delegate {
+                Android.App.AlertDialog.Builder alertDiag = new Android.App.AlertDialog.Builder(this);
+                alertDiag.SetTitle("Confirm delete");
+                alertDiag.SetMessage("Once deleted the activity cannot be recovered");
+                alertDiag.SetPositiveButton("Delete", (senderAlert, args) => {
+                    _dataService.DeleteOutsideActivity(outsideActivity);
+                    
+                    Toast.MakeText(this, "Deleted", ToastLength.Short).Show();
+                    Finish();
+                });
+                alertDiag.SetNegativeButton("Cancel", (senderAlert, args) => {
+                    alertDiag.Dispose();
+                });
+                Dialog diag = alertDiag.Create();
+                diag.Show();
+            };
 
         }
 
-        private void _deleteOutsideActivityButton_Click(object sender, EventArgs e)
+        private void _editOutsideActivityStartDateEditText_Click(object sender, EventArgs e)
         {
-            _dataService.DeleteOutsideActivity(outsideActivity);
-            Finish();
+            using (DatePickerDialog datePicker = new DatePickerDialog(this, this, outsideActivity.StartTime.Year, outsideActivity.StartTime.Month - 1, outsideActivity.StartTime.Day))
+            {
+                datePicker.Show();
+            }
         }
 
         private void _editOutsideActivityDurationEditText_Click(object sender, EventArgs e)
@@ -98,14 +116,6 @@ namespace GetOutside
             using (TimePickerDialog timePicker = new TimePickerDialog(this, TimePickerDialog.ThemeHoloLight, this, outsideActivity.StartTime.Hour, outsideActivity.StartTime.Minute, is24HourFormat))
             {
                 timePicker.Show();
-            }
-        }
-
-        private void _editOutsideActivityStartDateEditText_Click(object sender, EventArgs e)
-        {
-            using (DatePickerDialog datePicker = new DatePickerDialog(this, this, outsideActivity.StartTime.Year, outsideActivity.StartTime.Month - 1, outsideActivity.StartTime.Day))
-            {
-                datePicker.Show();
             }
         }
 

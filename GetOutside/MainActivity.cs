@@ -58,34 +58,56 @@ namespace GetOutside
             }
             
             // reset the chronometer and views
+            // if last activity in DB is not done and is tracking, check if user
+            // wants to save, discard, or continue tracking the activity.
             if (_currentOutsideActivity.IsTracking || !(_currentOutsideActivity.Done))
             {
-                //TimeSpan durationMillisecondsTimeSpan = new TimeSpan(_currentOutsideActivity.DurationMilliseconds);
-                long newChronometerBaseOffset;
+                Android.App.AlertDialog.Builder alertDiag = new Android.App.AlertDialog.Builder(this);
+                alertDiag.SetTitle("Confirm delete");
+                alertDiag.SetMessage("An incomplete activity was found. What would you like to do with the activity:");
+                alertDiag.SetPositiveButton("Discard", (senderAlert, args) => {
+                    _discardActivityButton_Click(senderAlert, args);
+                    Toast.MakeText(this, "Discard", ToastLength.Short).Show();
+                    //Finish();
+                });
+                alertDiag.SetNegativeButton("Continue", (senderAlert, args) => {
+                    //_resumeActivityButton_Click(senderAlert, args);
+                    // figure out how to continue this activity by calculating the duration
+                    // NewChronometer setting = durationMilliseconds + Now - EndTime
+                    _continueActivity();
+                    alertDiag.Dispose();
+                });
+                alertDiag.SetNeutralButton("Save", (senderAlert, args) => {
+                    _saveActivityButton_Click(senderAlert, args);
+                    alertDiag.Dispose();
+                });
+                Dialog diag = alertDiag.Create();
+                diag.Show();
+            }
+        }
 
-                // Reset the chronometer to the correct duration value accounting for time running in the background
-                if (_currentOutsideActivity.IsPaused)
-                {
-                    // timer was paused in the background
-                    newChronometerBaseOffset = (long)TimeSpan.FromMilliseconds(_currentOutsideActivity.DurationMilliseconds).TotalMilliseconds;
-                    SetPauseActivityView();
-                }
-                else
-                {
-                    // timer was running in the background
-                    TimeSpan currentActivityTimeSpan = _currentOutsideActivity.EndTime.Subtract(_currentOutsideActivity.StartTime);
-                    TimeSpan timeSinceEndTimeRecorded = DateTime.Now - _currentOutsideActivity.EndTime;
-                    newChronometerBaseOffset = (long)currentActivityTimeSpan.Add(timeSinceEndTimeRecorded).TotalMilliseconds;
-                    SetActivityTimingView();
-                }
-                
-                // Reset the Chronometer to account for a running activity
-                ResetChronometer(newChronometerBaseOffset, _currentOutsideActivity.IsPaused);
+        private void _continueActivity()
+        {
+            //TimeSpan durationMillisecondsTimeSpan = new TimeSpan(_currentOutsideActivity.DurationMilliseconds);
+            long newChronometerBaseOffset;
+
+            if (_currentOutsideActivity.IsPaused)
+            {
+                // timer was paused in the background
+                newChronometerBaseOffset = (long)TimeSpan.FromMilliseconds(_currentOutsideActivity.DurationMilliseconds).TotalMilliseconds;
+                SetPauseActivityView();
             }
             else
             {
-                ResetChronometer();
+                // timer was running in the background
+                TimeSpan currentActivityTimeSpan = _currentOutsideActivity.EndTime.Subtract(_currentOutsideActivity.StartTime);
+                TimeSpan timeSinceEndTimeRecorded = DateTime.Now - _currentOutsideActivity.EndTime;
+                newChronometerBaseOffset = (long)currentActivityTimeSpan.Add(timeSinceEndTimeRecorded).TotalMilliseconds;
+                SetActivityTimingView();
             }
+
+            // Reset the Chronometer to account for a running activity
+            ResetChronometer(newChronometerBaseOffset, _currentOutsideActivity.IsPaused);
         }
 
         protected override void OnStop()
