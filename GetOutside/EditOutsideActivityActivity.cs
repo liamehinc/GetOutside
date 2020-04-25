@@ -9,6 +9,7 @@ using Android.Content;
 using Android.Icu.Text;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.Design.Widget;
 using Android.Views;
 using Android.Widget;
 using GetOutside.Core.Model;
@@ -31,6 +32,7 @@ namespace GetOutside
 
         private Button _updateOutsideActivityButton;
         private Button _deleteOutsideActivityButton;
+        private EditText _editOutsideActivityNotesEditText;
 
         private List<OutsideActivity> outsideActivities;
         private OutsideActivity outsideActivity;
@@ -51,7 +53,6 @@ namespace GetOutside
 
                 outsideActivities = _dataService.GetOutsideActivity();
                 outsideActivity = outsideActivities[selectedOutsideActivityId];
-                currentDuration = TimeSpan.FromMilliseconds(outsideActivity.DurationMilliseconds);
             }
             catch (System.NullReferenceException)
             {
@@ -64,10 +65,32 @@ namespace GetOutside
             LinkEventHandlers(); 
         }
 
+        protected override void OnStart()
+        {
+            base.OnStart();
+
+
+        }
+
+        protected override void OnStop()
+        {
+
+            if(!outsideActivity.Done && outsideActivity.DurationMilliseconds < 1)
+            {
+                _dataService.DeleteOutsideActivity(outsideActivity);
+            }
+
+            base.OnStop();
+        }
+
         private void LinkEventHandlers()
         {
             _editOutsideActivityNameEditText.TextChanged += (object sender, Android.Text.TextChangedEventArgs e) => {
                 outsideActivity.Name = e.Text.ToString();
+            };
+            /// FIGURE OUT HOW TO POPULATE NOTES FIELD AND DISPLAY THE NOTES.
+            _editOutsideActivityNotesEditText.TextChanged += (object sender, Android.Text.TextChangedEventArgs e) => {
+                outsideActivity.Notes = e.Text.ToString();
             };
 
             _editOutsideActivityStartDateEditText.Click += _editOutsideActivityStartDateEditText_Click;
@@ -101,19 +124,10 @@ namespace GetOutside
             }
         }
 
-        private void _editOutsideActivityDurationEditText_Click(object sender, EventArgs e)
-        {
-            bool is24HourFormat = true;
-            using (TimePickerDialog timePicker = new TimePickerDialog(this, TimePickerDialog.ThemeHoloLight, this, currentDuration.Hours, currentDuration.Minutes, is24HourFormat))
-            {
-                timePicker.Show();
-            }
-        }
-
         private void _editOutsideActivityStartTimeEditText_Click(object sender, EventArgs e)
         {
             bool is24HourFormat = false;
-            using (TimePickerDialog timePicker = new TimePickerDialog(this, TimePickerDialog.ThemeHoloLight, this, outsideActivity.StartTime.Hour, outsideActivity.StartTime.Minute, is24HourFormat))
+            using (TimePickerDialog timePicker = new TimePickerDialog(this, this, outsideActivity.StartTime.Hour, outsideActivity.StartTime.Minute, is24HourFormat))
             {
                 timePicker.Show();
             }
@@ -125,6 +139,7 @@ namespace GetOutside
 
             // set isTracking and Done
             outsideActivity.Done = true;
+            outsideActivity.Notes = _editOutsideActivityNotesEditText.Text;
 
             // determine the new duration of the activity
             newDuration = new TimeSpan(_editOutsideActivityDurationTimePicker.Hour, _editOutsideActivityDurationTimePicker.Minute, 0);
@@ -144,12 +159,12 @@ namespace GetOutside
             if (outsideActivity.OutsideActivityId == 0)
             {
                 _dataService.CreateOutsideActivity(outsideActivity);
-                toastMessage = String.Format("Inserted {0} activity", outsideActivity.Name);
+                toastMessage = String.Format(CultureInfo.CurrentCulture,"Inserted {0} activity", outsideActivity.Name);
             }
             else
             {
                 _dataService.UpdateOutsideActivity(outsideActivity);
-                toastMessage = String.Format("Updated {0} activity", outsideActivity.Name); 
+                toastMessage = String.Format(CultureInfo.CurrentCulture, "Updated {0} activity", outsideActivity.Name); 
             }
 
             // close this intent
@@ -166,11 +181,16 @@ namespace GetOutside
             _editOutsideActivityDurationTimePicker = FindViewById<TimePicker>(Resource.Id.editOutsideActivityDurationTimePicker);
             _updateOutsideActivityButton = FindViewById<Button>(Resource.Id.updateOutsideActivityButton);
             _deleteOutsideActivityButton = FindViewById<Button>(Resource.Id.deleteOutsideActivityButton);
-            
+            _editOutsideActivityNotesEditText = FindViewById<EditText>(Resource.Id.editOutsideActivityNotesEditText);
+
+
+            //FIX NOT SETTING anything except name for current activity
             // set default values for data entry fields based on outdoorAcivity
             _editOutsideActivityNameEditText.SetText(outsideActivity.Name, TextView.BufferType.Editable);
+            _editOutsideActivityNotesEditText.SetText(outsideActivity.Notes, TextView.BufferType.Editable);
 
             // convert duration Milliseconds to hours and minutes
+            currentDuration = TimeSpan.FromMilliseconds(outsideActivity.DurationMilliseconds);
             _editOutsideActivityDurationTimePicker.Hour = currentDuration.Hours; //outsideActivity.DurationMilliseconds;
             _editOutsideActivityDurationTimePicker.Minute = currentDuration.Minutes; //currentTime.Minute;
 

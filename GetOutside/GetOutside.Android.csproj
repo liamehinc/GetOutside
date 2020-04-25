@@ -59,7 +59,7 @@
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <AndroidLinkMode>None</AndroidLinkMode>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
-    <AndroidKeyStore>false</AndroidKeyStore>
+    <AndroidKeyStore>true</AndroidKeyStore>
     <AotAssemblies>false</AotAssemblies>
     <EnableLLVM>false</EnableLLVM>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
@@ -72,6 +72,10 @@
     <AndroidLinkTool>proguard</AndroidLinkTool>
     <AndroidEnableMultiDex>false</AndroidEnableMultiDex>
     <AndroidPackageFormat>aab</AndroidPackageFormat>
+    <AndroidSigningKeyStore>C:\Users\william.thier\AppData\Local\Xamarin\Mono for Android\Keystore\getoutsideandroid\getoutsideandroid.keystore</AndroidSigningKeyStore>
+    <AndroidSigningStorePass>L1eselViolet!</AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>getOutsideMobile</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>L1eselViolet!</AndroidSigningKeyPass>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

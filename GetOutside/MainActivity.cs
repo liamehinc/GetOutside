@@ -31,6 +31,11 @@ namespace GetOutside
         private static string TOTALOUTSIDETIME = "Total Outside Time";
         private static string CURRENTOUTSIDETIME = "Current Outside Time";
         private static string NEWACTIVITYORPREVIOUSACTIVITY = "You can either create a new activity or enter previous activities";
+        private static string INCOMPLETEACTIVITYDETECTED = "INCOMPLETE ACTIVITY DETECTED!";
+        private static string INCOMPLETEACTIVITY = "An incomplete activity was found. What would you like to do with the activity:";
+        private static string CONTINUE = "Continue";
+        private static string DISCARD = "Discard";
+        private static string SAVE = "Save";
 
         private OutsideActivity _currentOutsideActivity = new OutsideActivity();
 
@@ -44,46 +49,61 @@ namespace GetOutside
 
             FindViews();
             LinkEventHandlers();
-            SetSaveActivityView();
+            //SetSaveActivityView();
+            
+            // if there isn't a current activity that's not done, check if there is an incomplete activity in the DB
+            if (_currentOutsideActivity.OutsideActivityId == 0)
+            {
+                _currentOutsideActivity = _dataService.GetLatestOutsideActivity();
+            }
+
+            // reset the chronometer and views
+            // if last activity in DB is not done and is tracking, check if user
+            // wants to save, discard, or continue tracking the activity.
+            if (_currentOutsideActivity.IsTracking || !(_currentOutsideActivity.Done))
+            {
+                _checkInterruptedActivity();
+            }
+            else
+            {
+                SetSaveActivityView();
+            }
+
         }
 
         protected override void OnStart()
         {
             base.OnStart();
 
-            // if there isn't a current activity that's not done, check if there is an incomplete activity in the DB
-            if (_currentOutsideActivity.OutsideActivityId == 0)
-            {
-                _currentOutsideActivity = _dataService.GetLatestOutsideActivity();
-            }
-            
             // reset the chronometer and views
             // if last activity in DB is not done and is tracking, check if user
             // wants to save, discard, or continue tracking the activity.
             if (_currentOutsideActivity.IsTracking || !(_currentOutsideActivity.Done))
             {
-                Android.App.AlertDialog.Builder alertDiag = new Android.App.AlertDialog.Builder(this);
-                alertDiag.SetTitle("Confirm delete");
-                alertDiag.SetMessage("An incomplete activity was found. What would you like to do with the activity:");
-                alertDiag.SetPositiveButton("Discard", (senderAlert, args) => {
-                    _discardActivityButton_Click(senderAlert, args);
-                    Toast.MakeText(this, "Discard", ToastLength.Short).Show();
-                    //Finish();
-                });
-                alertDiag.SetNegativeButton("Continue", (senderAlert, args) => {
-                    //_resumeActivityButton_Click(senderAlert, args);
-                    // figure out how to continue this activity by calculating the duration
-                    // NewChronometer setting = durationMilliseconds + Now - EndTime
-                    _continueActivity();
-                    alertDiag.Dispose();
-                });
-                alertDiag.SetNeutralButton("Save", (senderAlert, args) => {
-                    _saveActivityButton_Click(senderAlert, args);
-                    alertDiag.Dispose();
-                });
-                Dialog diag = alertDiag.Create();
-                diag.Show();
+                _continueActivity();
             }
+        }
+
+        private void _checkInterruptedActivity()
+        {
+            Android.App.AlertDialog.Builder alertDiag = new Android.App.AlertDialog.Builder(this);
+            alertDiag.SetTitle(INCOMPLETEACTIVITYDETECTED);
+            alertDiag.SetMessage(INCOMPLETEACTIVITY);
+            alertDiag.SetPositiveButton(DISCARD, (senderAlert, args) => {
+                _discardActivityButton_Click(senderAlert, args);
+                Toast.MakeText(this, "Discarded activity", ToastLength.Short).Show();
+                alertDiag.Dispose();
+            });
+            alertDiag.SetNegativeButton(CONTINUE, (senderAlert, args) => {
+                _continueActivity();
+                alertDiag.Dispose();
+            });
+            alertDiag.SetNeutralButton(SAVE, (senderAlert, args) => {
+                _saveActivityButton_Click(senderAlert, args);
+                alertDiag.Dispose();
+            });
+            Dialog diag = alertDiag.Create();
+            diag.Show();
         }
 
         private void _continueActivity()
@@ -95,6 +115,8 @@ namespace GetOutside
             {
                 // timer was paused in the background
                 newChronometerBaseOffset = (long)TimeSpan.FromMilliseconds(_currentOutsideActivity.DurationMilliseconds).TotalMilliseconds;
+
+                // reset activity view
                 SetPauseActivityView();
             }
             else
@@ -103,11 +125,13 @@ namespace GetOutside
                 TimeSpan currentActivityTimeSpan = _currentOutsideActivity.EndTime.Subtract(_currentOutsideActivity.StartTime);
                 TimeSpan timeSinceEndTimeRecorded = DateTime.Now - _currentOutsideActivity.EndTime;
                 newChronometerBaseOffset = (long)currentActivityTimeSpan.Add(timeSinceEndTimeRecorded).TotalMilliseconds;
+
+                // reset activity view
                 SetActivityTimingView();
             }
 
             // Reset the Chronometer to account for a running activity
-            ResetChronometer(newChronometerBaseOffset, _currentOutsideActivity.IsPaused);
+            ResetChronometer(newChronometerBaseOffset);
         }
 
         protected override void OnStop()
@@ -233,7 +257,7 @@ namespace GetOutside
             //_currentOutsideActivity.DurationMilliseconds = 7200000;
 
             _currentOutsideActivity.EndTime = DateTime.Now;
-            _currentOutsideActivity.DurationMilliseconds = convertChronometerToDuration(_currentActivityChronometer.Text.ToString(CultureInfo.CurrentCulture));
+            _currentOutsideActivity.DurationMilliseconds = ConvertChronometerToDuration(_currentActivityChronometer.Text.ToString(CultureInfo.CurrentCulture));
 
             // Convert the duration of the activity to a TimeSpan
             if (!TimeSpan.TryParse(_currentActivityChronometer.Text.ToString(CultureInfo.CurrentCulture), out TimeSpan durationMillisecondsTimeSpan))
@@ -268,7 +292,7 @@ namespace GetOutside
             Toast.MakeText(Application.Context, "Current outside activity time: " + string.Format(CultureInfo.CurrentCulture, "{0:hh\\:mm\\:ss}", elapsedSpan), ToastLength.Short).Show();
         }
 
-        private long convertChronometerToDuration(string chronoText)
+        private static long ConvertChronometerToDuration(string chronoText)
         {
             long durationMilliseconds = 0;
             // revisit this
@@ -307,7 +331,7 @@ namespace GetOutside
         {
             _currentOutsideActivity.IsTracking = true;
             _currentOutsideActivity.IsPaused = false;
-            ResetChronometer(_currentOutsideActivity.DurationMilliseconds, _currentOutsideActivity.IsPaused);
+            ResetChronometer(_currentOutsideActivity.DurationMilliseconds);
 
             SetActivityTimingView();
         }
@@ -320,7 +344,7 @@ namespace GetOutside
             }
         }
 
-        private void ResetChronometer(long currentDuration = 0, bool isPaused = false)
+        private void ResetChronometer(long currentDuration = 0)
         {
             _currentActivityChronometer.Base = SystemClock.ElapsedRealtime() - currentDuration;
             if (_currentOutsideActivity.IsTracking && !_currentOutsideActivity.IsPaused)

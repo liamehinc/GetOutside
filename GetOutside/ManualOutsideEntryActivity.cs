@@ -73,7 +73,7 @@ namespace GetOutside
 
             _dataService.CreateOutsideActivity(_newOutsideActivity);
             //base.OnBackPressed();
-            string toastMessage = String.Format("Inserted {0} activity", _newOutsideActivity.Name);
+            string toastMessage = String.Format(CultureInfo.CurrentCulture, "Inserted {0} activity", _newOutsideActivity.Name);
             Toast.MakeText(Application.Context, toastMessage, ToastLength.Short).Show();
             Finish();
         }
