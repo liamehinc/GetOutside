@@ -10,6 +10,7 @@
         android:text="Outside Activity Name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="Add activity name here"
         />
     <EditText
             android:id="@+id/editOutsideActivityNameEditText"
@@ -63,8 +64,10 @@
     <EditText
         android:id="@+id/editOutsideActivityNotesEditText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:imeOptions="actionGo"
+        android:hint="Add notes here"
          />
     
     <Button

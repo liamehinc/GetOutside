@@ -39,6 +39,8 @@ namespace GetOutside
 
         private SqliteDataService _dataService = new SqliteDataService();
 
+        private string _updateOutsideActivityButtonLabel = "Update Outside Activity";
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -56,6 +58,7 @@ namespace GetOutside
             }
             catch (System.NullReferenceException)
             {
+                _updateOutsideActivityButtonLabel = "Add Outside Activity";
                 outsideActivity = new OutsideActivity();
                 outsideActivity.StartTime = DateTime.Now.AddHours(-2);
                 _dataService.CreateOutsideActivity(outsideActivity);
@@ -68,8 +71,6 @@ namespace GetOutside
         protected override void OnStart()
         {
             base.OnStart();
-
-
         }
 
         protected override void OnStop()
@@ -182,9 +183,14 @@ namespace GetOutside
             _updateOutsideActivityButton = FindViewById<Button>(Resource.Id.updateOutsideActivityButton);
             _deleteOutsideActivityButton = FindViewById<Button>(Resource.Id.deleteOutsideActivityButton);
             _editOutsideActivityNotesEditText = FindViewById<EditText>(Resource.Id.editOutsideActivityNotesEditText);
+            _updateOutsideActivityButton.Text = _updateOutsideActivityButtonLabel;
 
+            if(_updateOutsideActivityButtonLabel == "Add Outside Activity")
+            {
+                _deleteOutsideActivityButton.Visibility = ViewStates.Invisible;
+            }
 
-            //FIX NOT SETTING anything except name for current activity
+            //FIX NOT SETTING anything except name for current activity. Field is not being returned from DB properly
             // set default values for data entry fields based on outdoorAcivity
             _editOutsideActivityNameEditText.SetText(outsideActivity.Name, TextView.BufferType.Editable);
             _editOutsideActivityNotesEditText.SetText(outsideActivity.Notes, TextView.BufferType.Editable);

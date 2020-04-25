@@ -28,14 +28,14 @@ namespace GetOutside.Database
         {
             System.Collections.Generic.List<OutsideActivity> outsideActivities = new System.Collections.Generic.List<OutsideActivity>();
             //            return _database.Table<outsideActivity>().ToList();
-            string getOutsideActivityQuery = string.Format(CultureInfo.CurrentCulture, "select OutsideActivityId, StartTime, DurationMilliseconds, name from outsideActivity order by StartTime desc");
+            string getOutsideActivityQuery = string.Format(CultureInfo.CurrentCulture, "select OutsideActivityId, StartTime, DurationMilliseconds, name, Notes from outsideActivity order by StartTime desc");
             outsideActivities = _database.Query<OutsideActivity>(getOutsideActivityQuery);
             return outsideActivities;
         }
 
         public OutsideActivity GetOutsideActivity(int id)
         {
-            string getOutsideActivityQuery = string.Format(CultureInfo.CurrentCulture, "select OutsideActivityId, StartTime, DurationMilliseconds, name from outsideActivity where outsideActivityId = {0} limit 1", id);
+            string getOutsideActivityQuery = string.Format(CultureInfo.CurrentCulture, "select OutsideActivityId, StartTime, DurationMilliseconds, Name, Notes from outsideActivity where outsideActivityId = {0} limit 1", id);
             List<OutsideActivity> outsideActivities = _database.Query<OutsideActivity>(getOutsideActivityQuery);
             OutsideActivity retreivedOutsideActivity = outsideActivities[0];
 
