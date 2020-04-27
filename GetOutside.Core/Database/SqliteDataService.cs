@@ -4,13 +4,14 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Android.App;
+using Android.Content;
 using Android.Widget;
 using GetOutside.Core.Model;
 using SQLite;
 
 namespace GetOutside.Database
 {
-    public sealed class SqliteDataService : iLocalDataService, IDisposable
+    public sealed class SqliteDataService : IILocalDataService, IDisposable
     {
         private SQLiteConnection _database;
 
@@ -28,14 +29,14 @@ namespace GetOutside.Database
         {
             System.Collections.Generic.List<OutsideActivity> outsideActivities = new System.Collections.Generic.List<OutsideActivity>();
             //            return _database.Table<outsideActivity>().ToList();
-            string getOutsideActivityQuery = string.Format(CultureInfo.CurrentCulture, "select OutsideActivityId, StartTime, DurationMilliseconds, name, Notes from outsideActivity order by StartTime desc");
+            string getOutsideActivityQuery = string.Format(CultureInfo.CurrentCulture, "select OutsideActivityId, Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, isTracking from outsideActivity order by StartTime desc");
             outsideActivities = _database.Query<OutsideActivity>(getOutsideActivityQuery);
             return outsideActivities;
         }
 
         public OutsideActivity GetOutsideActivity(int id)
         {
-            string getOutsideActivityQuery = string.Format(CultureInfo.CurrentCulture, "select OutsideActivityId, StartTime, DurationMilliseconds, Name, Notes from outsideActivity where outsideActivityId = {0} limit 1", id);
+            string getOutsideActivityQuery = string.Format(CultureInfo.CurrentCulture, "select OutsideActivityId, Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, isTracking from outsideActivity where outsideActivityId = {0} limit 1", id);
             List<OutsideActivity> outsideActivities = _database.Query<OutsideActivity>(getOutsideActivityQuery);
             OutsideActivity retreivedOutsideActivity = outsideActivities[0];
 
@@ -94,12 +95,37 @@ namespace GetOutside.Database
             if (_database == null)
             {
                 string dbPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "GetOutsideDatabase.db3");
-                //string dbPath = Path.Combine("/acct/", "GetOutsideDatabase.db3");
                 _database = new SQLiteConnection(dbPath);
             }
 
+            if (_database.ExecuteScalar<short>("select count(sql) from sqlite_master where name = 'User' and sql like '%integer primary key autoincrement not null%'") == 0)
+            {
+                _database.DropTable<User>();
+            }
+            // Create the user table if necessary
+            // if the table is created, add a default user
+            var createUserTableResult = _database.CreateTable<User>();
+
+            List<User> allUsers = _database.Table<User>().ToList();
+
+            // if there are no users in the table create a default user profile and associate the profile with all activities
+            if (allUsers.Count == 0)
+            {
+                User newUser = new User();
+                newUser.DefaultUser = true;
+
+                _database.Insert(newUser);
+            }
+
+            // associate default user to unassociated activities
+            if(_database.ExecuteScalar<short>("select count(*) from outsideActivity where UserId = 0") > 0)
+            {
+                int defaultUserId = _database.ExecuteScalar<short>("select UserId from User where defaultUser = 1");
+                var setDefaultUserResult = _database.Query<User>(string.Format("update outsideActivity set UserId = {0}", defaultUserId));
+            }
+
             // check if outsideActivity table auto populates outsideActivityId column. If not, re-create table with auto populate outsideActivityId column
-            if(_database.ExecuteScalar<short>("select count(sql) from sqlite_master where name = 'outsideActivity' and sql like '%integer primary key autoincrement not null%'") == 0)
+            if (_database.ExecuteScalar<short>("select count(sql) from sqlite_master where name = 'outsideActivity' and sql like '%integer primary key autoincrement not null%'") == 0)
             { 
                 string sqlQuery = "BEGIN TRANSACTION; CREATE TEMPORARY TABLE OutsideActivity_backup(Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, IsTracking, IsPaused); INSERT INTO OutsideActivity_backup SELECT (Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, YearMonth, IsTracking, IsPaused) FROM OutsideActivity; DROP TABLE OutsideActivity; CREATE TABLE OutsideActivity(OutsideActivityId INTEGER PRIMARY KEY, Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, YearMonth, IsTracking, IsPaused); INSERT INTO OutsideActivity SELECT (Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, YearMonth, IsTracking, IsPaused) FROM OutsideActivity_backup; DROP TABLE OutsideActivity_backup; COMMIT; ";
                 _database.Query<OutsideActivity>(sqlQuery);
@@ -109,9 +135,6 @@ namespace GetOutside.Database
                 // Create the OutsideActivity table if necessary
                 _database.CreateTable<OutsideActivity>();
             }
-
-            // Create the user table if necessary
-            _database.CreateTable<User>();
         }
 
         public void UpdateOutsideActivity(OutsideActivity outsideActivity)
@@ -124,5 +147,49 @@ namespace GetOutside.Database
             ((IDisposable)_database).Dispose();
         }
 
+        public int CreateUser(User newUser, bool defaultUser = false)
+        {
+            // set defaultUser setting
+            if(defaultUser)
+            {
+                string updateDefaultUserValueQuery = "Update User set DefaultUser = false";
+                _database.ExecuteScalar<User>(updateDefaultUserValueQuery);
+            }
+
+            return _database.Insert(newUser);
+        }
+       
+        public User GetDefaultUser()
+        {
+            User defaultUser = _database.Table<User>().Where(a => a.DefaultUser.Equals(1)).FirstOrDefault();
+
+            if(defaultUser == null)
+            {
+                defaultUser = _database.Table<User>().FirstOrDefault();
+                User newUser = new User();
+                newUser.DefaultUser = true;
+
+                _database.Insert(newUser);
+
+                defaultUser = _database.Table<User>().Where(a => a.DefaultUser.Equals(1)).FirstOrDefault();
+            }
+
+            return defaultUser;
+        }
+
+        public List<User> GetAllUsers()
+        {
+            return _database.Table<User>().ToList();
+        }
+        
+        public User GetUser(int id = 0)
+        {
+            return _database.Table<User>().Where(a => a.UserId.Equals(id)).FirstOrDefault();
+        }
+
+        public void deleteAllUsers()
+        {
+            _database.DeleteAll<User>();
+        }
     }
 }

@@ -3,7 +3,7 @@ using System;
 
 namespace GetOutside.Database
 {
-    internal class User
+    public class User
     {
         [PrimaryKey, AutoIncrement, Column("UserId")]
         public int UserId { get; set; }
@@ -12,6 +12,13 @@ namespace GetOutside.Database
         public string FullName => FirstName + " " + LastName;
         //public date DateofBirth { get; set; }
         public int GoalHours { get; set; }
+        public bool DefaultUser { get; set; }
 
+        public User()
+        {
+            FirstName = "default";
+            LastName = "user";
+            GoalHours = 1000;
+        }
     }
 }

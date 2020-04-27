@@ -71,7 +71,7 @@
          />
     
     <Button
-        android:text="Add or Update Outside Activity"
+        android:text="Update Activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/outsideBrown"

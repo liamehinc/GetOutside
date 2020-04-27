@@ -15,7 +15,7 @@ namespace GetOutside
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true)]
     public class MainActivity : AppCompatActivity//, BottomNavigationView.IOnNavigationItemSelectedListener
     {
-        TextView textMessage;
+        private TextView textMessage;
         private Button _startActivityButton;
         private Button _resumeActivityButton;
         private Button _discardActivityButton;
@@ -38,6 +38,7 @@ namespace GetOutside
         private static string SAVE = "Save";
 
         private OutsideActivity _currentOutsideActivity = new OutsideActivity();
+        private User _currentUser = new User();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -46,29 +47,12 @@ namespace GetOutside
             SetContentView(Resource.Layout.activity_main);
 
             _dataService.Initialize();
-
+            
             FindViews();
             LinkEventHandlers();
             //SetSaveActivityView();
-            
-            // if there isn't a current activity that's not done, check if there is an incomplete activity in the DB
-            if (_currentOutsideActivity.OutsideActivityId == 0)
-            {
-                _currentOutsideActivity = _dataService.GetLatestOutsideActivity();
-            }
 
-            // reset the chronometer and views
-            // if last activity in DB is not done and is tracking, check if user
-            // wants to save, discard, or continue tracking the activity.
-            if (_currentOutsideActivity.IsTracking || !(_currentOutsideActivity.Done))
-            {
-                _checkInterruptedActivity();
-            }
-            else
-            {
-                SetSaveActivityView();
-            }
-
+            SetValues();
         }
 
         protected override void OnStart()
@@ -83,6 +67,11 @@ namespace GetOutside
                 _continueActivity();
             }
         }
+
+        //protected override void OnDestroy()
+        //{
+        //    base.OnDestroy();
+        //}
 
         private void _checkInterruptedActivity()
         {
@@ -126,6 +115,7 @@ namespace GetOutside
                 TimeSpan timeSinceEndTimeRecorded = DateTime.Now - _currentOutsideActivity.EndTime;
                 newChronometerBaseOffset = (long)currentActivityTimeSpan.Add(timeSinceEndTimeRecorded).TotalMilliseconds;
 
+                _currentActivityChronometer.Start();
                 // reset activity view
                 SetActivityTimingView();
             }
@@ -321,6 +311,8 @@ namespace GetOutside
             ResetChronometer();
             _currentOutsideActivity.StartTime = DateTime.Now;
             _currentOutsideActivity.Name = "outsideActivity-" + _currentOutsideActivity.StartTime.ToString("yyyyMMddHHmmssff", CultureInfo.CurrentCulture);
+            
+            _currentOutsideActivity.UserId = _currentUser.UserId;
 
             _dataService.CreateOutsideActivity(_currentOutsideActivity);
 
@@ -364,6 +356,45 @@ namespace GetOutside
             _currentActivityChronometer = FindViewById<Chronometer>(Resource.Id.currentActivityChronometer);
             _viewOutsideHoursButton = FindViewById<Button>(Resource.Id.viewOutsideHoursButton);
             _currentActivityTextView = FindViewById<TextView>(Resource.Id.currentActivityTextView);
+        }
+
+        private void SetValues()
+        {
+
+            // if there isn't a current activity that's not done, check if there is an incomplete activity in the DB
+            if (_currentOutsideActivity.OutsideActivityId == 0)
+            {
+                _currentOutsideActivity = _dataService.GetLatestOutsideActivity();
+            }
+
+            // reset the chronometer and views
+            // if last activity in DB is not done and is tracking, check if user
+            // wants to save, discard, or continue tracking the activity.
+            if (_currentOutsideActivity.IsTracking || !(_currentOutsideActivity.Done))
+            {
+                _checkInterruptedActivity();
+            }
+            else
+            {
+                SetSaveActivityView();
+            }
+
+            // see if the db has any users
+            // start with last user to have an activity
+            // if there is no previous user, get the default user
+            // if there is no default user and there are no users, create a default user
+            if (_currentUser.UserId == 0)
+            {
+                try
+                {
+                    //_dataService.deleteAllUsers();
+                    _currentUser = _dataService.GetDefaultUser();
+                }
+                catch
+                {
+                    _currentOutsideActivity.UserId = _dataService.CreateUser(_currentUser);
+                }
+            }
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)

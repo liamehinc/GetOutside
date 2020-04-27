@@ -39,7 +39,8 @@ namespace GetOutside
 
         private SqliteDataService _dataService = new SqliteDataService();
 
-        private string _updateOutsideActivityButtonLabel = "Update Outside Activity";
+        private string _updateOutsideActivityButtonLabel = "Update Activity";
+        private string _deleteOutsideActivityButtonLabel = "Delete Activity";
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -58,7 +59,8 @@ namespace GetOutside
             }
             catch (System.NullReferenceException)
             {
-                _updateOutsideActivityButtonLabel = "Add Outside Activity";
+                _updateOutsideActivityButtonLabel = "Add Activity";
+                _deleteOutsideActivityButtonLabel = "Discard Activity";
                 outsideActivity = new OutsideActivity();
                 outsideActivity.StartTime = DateTime.Now.AddHours(-2);
                 _dataService.CreateOutsideActivity(outsideActivity);
@@ -184,13 +186,8 @@ namespace GetOutside
             _deleteOutsideActivityButton = FindViewById<Button>(Resource.Id.deleteOutsideActivityButton);
             _editOutsideActivityNotesEditText = FindViewById<EditText>(Resource.Id.editOutsideActivityNotesEditText);
             _updateOutsideActivityButton.Text = _updateOutsideActivityButtonLabel;
+            _deleteOutsideActivityButton.Text = _deleteOutsideActivityButtonLabel;
 
-            if(_updateOutsideActivityButtonLabel == "Add Outside Activity")
-            {
-                _deleteOutsideActivityButton.Visibility = ViewStates.Invisible;
-            }
-
-            //FIX NOT SETTING anything except name for current activity. Field is not being returned from DB properly
             // set default values for data entry fields based on outdoorAcivity
             _editOutsideActivityNameEditText.SetText(outsideActivity.Name, TextView.BufferType.Editable);
             _editOutsideActivityNotesEditText.SetText(outsideActivity.Notes, TextView.BufferType.Editable);

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace GetOutside.Database
 {
-    public interface iLocalDataService
+    public interface IILocalDataService
     {
         void Initialize();
         void CreateOutsideActivity(OutsideActivity outsideActivity);
