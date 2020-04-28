@@ -121,19 +121,15 @@ namespace GetOutside
 
         private void _editOutsideActivityStartDateEditText_Click(object sender, EventArgs e)
         {
-            using (DatePickerDialog datePicker = new DatePickerDialog(this, this, outsideActivity.StartTime.Year, outsideActivity.StartTime.Month - 1, outsideActivity.StartTime.Day))
-            {
-                datePicker.Show();
-            }
+            using DatePickerDialog datePicker = new DatePickerDialog(this, this, outsideActivity.StartTime.Year, outsideActivity.StartTime.Month - 1, outsideActivity.StartTime.Day);
+            datePicker.Show();
         }
 
         private void _editOutsideActivityStartTimeEditText_Click(object sender, EventArgs e)
         {
             bool is24HourFormat = false;
-            using (TimePickerDialog timePicker = new TimePickerDialog(this, this, outsideActivity.StartTime.Hour, outsideActivity.StartTime.Minute, is24HourFormat))
-            {
-                timePicker.Show();
-            }
+            using TimePickerDialog timePicker = new TimePickerDialog(this, this, outsideActivity.StartTime.Hour, outsideActivity.StartTime.Minute, is24HourFormat);
+            timePicker.Show();
         }
 
         private void _updateOutsideActivityButton_Click(object sender, EventArgs e)

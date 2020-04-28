@@ -93,6 +93,8 @@ namespace GetOutside
             });
             Dialog diag = alertDiag.Create();
             diag.Show();
+
+            alertDiag.Dispose();
         }
 
         private void _continueActivity()
@@ -170,10 +172,8 @@ namespace GetOutside
                 TimeSpan outsideHours = _dataService.GetOutsideHours();
                 if(outsideHours.TotalMilliseconds > 0)
                 {
-                    using (Intent intent = new Intent(this, typeof(outsideActivityAggregationActivity)))
-                    {
-                        StartActivity(intent);
-                    }
+                    using Intent intent = new Intent(this, typeof(outsideActivityAggregationActivity));
+                    StartActivity(intent);
                 }
                 else
                 {
@@ -181,7 +181,7 @@ namespace GetOutside
                     Toast.MakeText(Application.Context, toastMessage, ToastLength.Short).Show();
                 }
             }
-            catch
+            catch (System.NullReferenceException)
             {
                 string toastMessage = NEWACTIVITYORPREVIOUSACTIVITY;
                 Toast.MakeText(Application.Context, toastMessage, ToastLength.Short).Show();
@@ -330,10 +330,8 @@ namespace GetOutside
 
         private void _addActivityButton_Click(object sender, EventArgs e)
         {
-            using (Intent editOutsideActivityIntent = new Intent(this, typeof(EditOutsideActivityActivity)))
-            {
-                StartActivity(editOutsideActivityIntent);
-            }
+            using Intent editOutsideActivityIntent = new Intent(this, typeof(EditOutsideActivityActivity));
+            StartActivity(editOutsideActivityIntent);
         }
 
         private void ResetChronometer(long currentDuration = 0)
@@ -390,7 +388,7 @@ namespace GetOutside
                     //_dataService.deleteAllUsers();
                     _currentUser = _dataService.GetDefaultUser();
                 }
-                catch
+                catch (System.NullReferenceException)
                 {
                     _currentOutsideActivity.UserId = _dataService.CreateUser(_currentUser);
                 }

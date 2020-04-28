@@ -35,12 +35,10 @@ namespace GetOutside
         }
         private void _outsideActivityDailyAdapter_ItemClick(object sender, int e)
         {
-            using (var intent = new Intent())
-            {
-                intent.SetClass(this, typeof(OutsideActivityDetailActivity));
-                intent.PutExtra("selectedOutsideActivityId", e);
-                StartActivity(intent);
-            }
+            using var intent = new Intent();
+            intent.SetClass(this, typeof(OutsideActivityDetailActivity));
+            intent.PutExtra("selectedOutsideActivityId", e);
+            StartActivity(intent);
         }
     }
 }

@@ -84,7 +84,7 @@ namespace GetOutside.Database
 
                 return new TimeSpan(ticks);
             }
-            catch
+            catch (System.NullReferenceException)
             {
                 //Toast.MakeText(Application.Context, "There are no activities saved yet", ToastLength.Short).Show();
                 return new TimeSpan(0);
@@ -121,7 +121,7 @@ namespace GetOutside.Database
             if(_database.ExecuteScalar<short>("select count(*) from outsideActivity where UserId = 0") > 0)
             {
                 int defaultUserId = _database.ExecuteScalar<short>("select UserId from User where defaultUser = 1");
-                var setDefaultUserResult = _database.Query<User>(string.Format("update outsideActivity set UserId = {0}", defaultUserId));
+                var setDefaultUserResult = _database.Query<User>(string.Format(CultureInfo.CurrentCulture, "update outsideActivity set UserId = {0}", defaultUserId));
             }
 
             // check if outsideActivity table auto populates outsideActivityId column. If not, re-create table with auto populate outsideActivityId column
