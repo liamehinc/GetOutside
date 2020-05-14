@@ -27,6 +27,7 @@ namespace GetOutside.Core.Model
             IsTracking = false;
             IsPaused = false;
             Done = false;
+            UserId = 1;
         }
 
         public OutsideActivity(bool isTracking = false)
