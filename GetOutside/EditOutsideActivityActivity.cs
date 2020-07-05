@@ -54,9 +54,9 @@ namespace GetOutside
             {
                 var selectedOutsideActivityId = Intent.Extras.GetInt("selectedOutsideActivityId");
 
-                //outsideActivities = _dataService.GetOutsideActivity();
-                //outsideActivity = outsideActivities[selectedOutsideActivityId];
-                outsideActivity = _dataService.GetOutsideActivity(selectedOutsideActivityId);
+                outsideActivities = _dataService.GetOutsideActivity();
+                outsideActivity = outsideActivities[selectedOutsideActivityId];
+                //outsideActivity = _dataService.GetOutsideActivity(selectedOutsideActivityId);
             }
             catch (System.NullReferenceException)
             {

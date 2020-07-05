@@ -155,11 +155,11 @@ namespace GetOutside
         private async void _currentActivityChronometer_ClickAsync(object sender, EventArgs e)
         {
             // Bring up edit activity activity
-            if(_currentOutsideActivity.DurationMilliseconds > 10000)
+            if(_currentOutsideActivity.DurationMilliseconds > 0)
             {
                 using var intent = new Intent();
                 intent.SetClass(this, typeof(EditOutsideActivityActivity));
-                intent.PutExtra("selectedOutsideActivityId", _currentOutsideActivity.OutsideActivityId);
+                intent.PutExtra("selectedOutsideActivityId", 0);
                 StartActivity(intent);
             }
             else
