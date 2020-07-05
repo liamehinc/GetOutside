@@ -36,6 +36,9 @@ namespace GetOutside
         private static string CONTINUE = "Continue";
         private static string DISCARD = "Discard";
         private static string SAVE = "Save";
+        private static string NOVALIDACTIVITYDETECTED = "No Valid Activity";
+        private static string NOVALIDACTIVITYMESSAGE = "No valid activity selected. Valid acitivties can be found by browsing previous activities";
+        private static string OK = "OK";
 
         private OutsideActivity _currentOutsideActivity = new OutsideActivity();
         private User _currentUser = new User();
@@ -146,7 +149,35 @@ namespace GetOutside
             _addActivityButton.Click += _addActivityButton_Click;
             _viewOutsideHoursButton.Click += _viewOutsideHoursButton_Click;
             _discardActivityButton.Click += _discardActivityButton_Click;
+            _currentActivityChronometer.Click += _currentActivityChronometer_ClickAsync;
        }
+
+        private async void _currentActivityChronometer_ClickAsync(object sender, EventArgs e)
+        {
+            // Bring up edit activity activity
+            if(_currentOutsideActivity.DurationMilliseconds > 10000)
+            {
+                using var intent = new Intent();
+                intent.SetClass(this, typeof(EditOutsideActivityActivity));
+                intent.PutExtra("selectedOutsideActivityId", _currentOutsideActivity.OutsideActivityId);
+                StartActivity(intent);
+            }
+            else
+            {
+                //                await DisplayAlert("No Valid Acitvity", "You have been alerted", "OK");
+                Android.App.AlertDialog.Builder alertDiag = new Android.App.AlertDialog.Builder(this);
+                alertDiag.SetTitle(NOVALIDACTIVITYDETECTED);
+                alertDiag.SetMessage(NOVALIDACTIVITYMESSAGE);
+                alertDiag.SetPositiveButton(OK, (senderAlert, args) => {
+                    alertDiag.Dispose();
+                });
+                
+                Dialog diag = alertDiag.Create();
+                diag.Show();
+
+                alertDiag.Dispose();
+            }
+        }
 
         private void _discardActivityButton_Click(object sender, EventArgs e)
         {

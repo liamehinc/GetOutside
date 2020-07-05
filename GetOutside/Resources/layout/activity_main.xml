@@ -28,6 +28,7 @@
         android:textSize="30dp"
         android:textColor="@color/outsideBrown"
         android:backgroundTint="@color/springGreen"
+        android:clickable="true" 
     />
 
     <Button
