@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 
 using Android.App;
 using Android.Content;
-using Android.Icu.Text;
 using Android.OS;
-using Android.Runtime;
-using Android.Support.Design.Widget;
-using Android.Views;
 using Android.Widget;
 using GetOutside.Core.Model;
 using GetOutside.Database;
@@ -54,11 +48,19 @@ namespace GetOutside
             {
                 var selectedOutsideActivityId = Intent.Extras.GetInt("selectedOutsideActivityId");
 
-                //outsideActivities = _dataService.GetOutsideActivity();
-                //outsideActivity = outsideActivities[selectedOutsideActivityId];
-                outsideActivity = _dataService.GetOutsideActivity(selectedOutsideActivityId);
+                outsideActivities = _dataService.GetOutsideActivity();
+                outsideActivity = outsideActivities[selectedOutsideActivityId];
+                //outsideActivity = _dataService.GetOutsideActivity(selectedOutsideActivityId);
             }
             catch (System.NullReferenceException)
+            {
+                _updateOutsideActivityButtonLabel = "Add Activity";
+                _deleteOutsideActivityButtonLabel = "Discard Activity";
+                outsideActivity = new OutsideActivity();
+                outsideActivity.StartTime = DateTime.Now.AddHours(-2);
+                _dataService.CreateOutsideActivity(outsideActivity);
+            }
+            catch (System.ArgumentOutOfRangeException)
             {
                 _updateOutsideActivityButtonLabel = "Add Activity";
                 _deleteOutsideActivityButtonLabel = "Discard Activity";

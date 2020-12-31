@@ -35,10 +35,9 @@ namespace GetOutside.Database
         }
 
         public OutsideActivity GetOutsideActivity(int id)
-        {
-            string getOutsideActivityQuery = string.Format(CultureInfo.CurrentCulture, "select OutsideActivityId, Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, isTracking from outsideActivity where outsideActivityId = {0} limit 1", id);
-            List<OutsideActivity> outsideActivities = _database.Query<OutsideActivity>(getOutsideActivityQuery);
-            OutsideActivity retreivedOutsideActivity = outsideActivities[0];
+        {      
+            List<OutsideActivity> outsideActivities = this.GetOutsideActivity();
+            OutsideActivity retreivedOutsideActivity = outsideActivities[id];
 
             return retreivedOutsideActivity;
         }
@@ -54,7 +53,8 @@ namespace GetOutside.Database
             }
             else
             {
-                return new OutsideActivity();
+                //return new OutsideActivity();
+                return null;
             }
         }
 
@@ -98,12 +98,6 @@ namespace GetOutside.Database
                 _database = new SQLiteConnection(dbPath);
             }
 
-            // cleanup old database schema lacking primary key on User database 04/27/2020
-            if (_database.ExecuteScalar<short>("select count(sql) from sqlite_master where name = 'User' and sql like '%integer primary key autoincrement not null%'") == 0)
-            {
-                _database.DropTable<User>();
-            }
-
             // Create the user table if necessary
             _ = _database.CreateTable<User>();
             List<User> allUsers = _database.Table<User>().ToList();
@@ -115,24 +109,27 @@ namespace GetOutside.Database
                 newUser.DefaultUser = true;
                 _database.Insert(newUser);
 
-                _database.Query<OutsideActivity>("update OutsideActivity set UserId = 1");
             }
 
-            // associate default user to unassociated activities
-            if (_database.ExecuteScalar<short>("select count(*) from outsideActivity where UserId = 0") > 0)
-            {
-                int defaultUserId = _database.ExecuteScalar<short>("select UserId from User where defaultUser = 1");
-                var setDefaultUserResult = _database.Query<User>(string.Format(CultureInfo.CurrentCulture, "update outsideActivity set UserId = {0}", defaultUserId));
-            }
-
+            _ = _database.CreateTable<OutsideActivity>();
+            List<OutsideActivity> allOutsideActivities = _database.Table<OutsideActivity>().ToList();
+            
             // Create the OutsideActivity table if necessary
-            var createdOutsideActivityTable = _database.CreateTable<OutsideActivity>();
-            // check if outsideActivity table auto populates outsideActivityId column. If not, re-create table with auto populate outsideActivityId column
-            if (createdOutsideActivityTable == SQLite.CreateTableResult.Migrated && _database.ExecuteScalar<short>("select count(sql) from sqlite_master where name = 'outsideActivity' and sql like '%integer primary key autoincrement not null%'") == 0)
-            {
-                string sqlQuery = "BEGIN TRANSACTION; CREATE TEMPORARY TABLE OutsideActivity_backup(Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, IsTracking, IsPaused); INSERT INTO OutsideActivity_backup SELECT (Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, YearMonth, IsTracking, IsPaused) FROM OutsideActivity; DROP TABLE OutsideActivity; CREATE TABLE OutsideActivity(OutsideActivityId INTEGER PRIMARY KEY, Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, YearMonth, IsTracking, IsPaused); INSERT INTO OutsideActivity SELECT (Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, YearMonth, IsTracking, IsPaused) FROM OutsideActivity_backup; DROP TABLE OutsideActivity_backup; COMMIT; ";
-                _database.Query<OutsideActivity>(sqlQuery);
-            }
+            //var createdOutsideActivityTable = _database.CreateTable<OutsideActivity>();
+            //// check if outsideActivity table auto populates outsideActivityId column. If not, re-create table with auto populate outsideActivityId column
+            //if (createdOutsideActivityTable == SQLite.CreateTableResult.Migrated && _database.ExecuteScalar<short>("select count(sql) from sqlite_master where name = 'outsideActivity' and sql like '%integer primary key autoincrement not null%'") == 0)
+            //{
+            //    string sqlQuery = "BEGIN TRANSACTION; CREATE TEMPORARY TABLE OutsideActivity_backup(Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, IsTracking, IsPaused); INSERT INTO OutsideActivity_backup SELECT (Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, YearMonth, IsTracking, IsPaused) FROM OutsideActivity; DROP TABLE OutsideActivity; CREATE TABLE OutsideActivity(OutsideActivityId INTEGER PRIMARY KEY, Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, YearMonth, IsTracking, IsPaused); INSERT INTO OutsideActivity SELECT (Name, StartTime, EndTime, DurationMilliseconds, ActivityType, UserId, Notes, Done, YearMonth, IsTracking, IsPaused) FROM OutsideActivity_backup; DROP TABLE OutsideActivity_backup; COMMIT; ";
+            //    _database.Query<OutsideActivity>(sqlQuery);
+            //}
+
+            //// associate default user to unassociated activities
+            //if (_database.ExecuteScalar<short>("select count(*) from outsideActivity where UserId = 0") > 0)
+            //{
+            //    int defaultUserId = _database.ExecuteScalar<short>("select UserId from User where defaultUser = 1");
+            //    var setDefaultUserResult = _database.Query<User>(string.Format(CultureInfo.CurrentCulture, "update outsideActivity set UserId = {0}", defaultUserId));
+            //}
+
         }
 
         public void UpdateOutsideActivity(OutsideActivity outsideActivity)
