@@ -40,8 +40,11 @@ namespace GetOutside
         private static string NOVALIDACTIVITYMESSAGE = "No valid activity selected. Valid acitivties can be found by browsing previous activities";
         private static string OK = "OK";
 
-        private OutsideActivity _currentOutsideActivity = new OutsideActivity();
-        private User _currentUser = new User();
+         User _currentUser;
+         OutsideActivity _currentOutsideActivity;
+
+        //private OutsideActivity _currentOutsideActivity = new OutsideActivity();
+        //private User _currentUser = new User();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -65,7 +68,7 @@ namespace GetOutside
             // reset the chronometer and views
             // if last activity in DB is not done and is tracking, check if user
             // wants to save, discard, or continue tracking the activity.
-            if (_currentOutsideActivity.IsTracking || !(_currentOutsideActivity.Done))
+            if (_currentOutsideActivity != null && (_currentOutsideActivity.IsTracking || !(_currentOutsideActivity.Done)))
             {
                 _continueActivity();
             }
@@ -132,7 +135,7 @@ namespace GetOutside
         protected override void OnStop()
         {
             // only need to update the activity in DB if it isn't paused
-            if (_currentOutsideActivity.IsTracking && !_currentOutsideActivity.IsPaused)
+            if (_currentOutsideActivity != null && _currentOutsideActivity.IsTracking && !_currentOutsideActivity.IsPaused)
             {
                 // Finalize OutsideActivityDatabase entry -set end time, durationMilliseconds
                 _updateCurrentActivity();
@@ -149,13 +152,13 @@ namespace GetOutside
             _addActivityButton.Click += _addActivityButton_Click;
             _viewOutsideHoursButton.Click += _viewOutsideHoursButton_Click;
             _discardActivityButton.Click += _discardActivityButton_Click;
-            _currentActivityChronometer.Click += _currentActivityChronometer_ClickAsync;
+            _currentActivityChronometer.Click += _currentActivityChronometer_Click;
        }
 
-        private async void _currentActivityChronometer_ClickAsync(object sender, EventArgs e)
+        private void _currentActivityChronometer_Click(object sender, EventArgs e)
         {
             // Bring up edit activity activity
-            if(_currentOutsideActivity.DurationMilliseconds > 0)
+            if (_currentOutsideActivity != null && _currentOutsideActivity.DurationMilliseconds > 0)
             {
                 using var intent = new Intent();
                 intent.SetClass(this, typeof(EditOutsideActivityActivity));
@@ -168,10 +171,11 @@ namespace GetOutside
                 Android.App.AlertDialog.Builder alertDiag = new Android.App.AlertDialog.Builder(this);
                 alertDiag.SetTitle(NOVALIDACTIVITYDETECTED);
                 alertDiag.SetMessage(NOVALIDACTIVITYMESSAGE);
-                alertDiag.SetPositiveButton(OK, (senderAlert, args) => {
+                alertDiag.SetPositiveButton(OK, (senderAlert, args) =>
+                {
                     alertDiag.Dispose();
                 });
-                
+
                 Dialog diag = alertDiag.Create();
                 diag.Show();
 
@@ -391,7 +395,7 @@ namespace GetOutside
         {
 
             // if there isn't a current activity that's not done, check if there is an incomplete activity in the DB
-            if (_currentOutsideActivity.OutsideActivityId == 0)
+            if (_currentOutsideActivity == null || _currentOutsideActivity.OutsideActivityId == 0)
             {
                 _currentOutsideActivity = _dataService.GetLatestOutsideActivity();
             }
@@ -399,7 +403,7 @@ namespace GetOutside
             // reset the chronometer and views
             // if last activity in DB is not done and is tracking, check if user
             // wants to save, discard, or continue tracking the activity.
-            if (_currentOutsideActivity.IsTracking || !(_currentOutsideActivity.Done))
+            if (_currentOutsideActivity != null && (_currentOutsideActivity.IsTracking || !(_currentOutsideActivity.Done)) )
             {
                 _checkInterruptedActivity();
             }
@@ -412,7 +416,7 @@ namespace GetOutside
             // start with last user to have an activity
             // if there is no previous user, get the default user
             // if there is no default user and there are no users, create a default user
-            if (_currentUser.UserId == 0)
+            if (_currentUser == null || _currentUser.UserId == 0)
             {
                 try
                 {

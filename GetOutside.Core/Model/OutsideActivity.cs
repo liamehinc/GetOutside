@@ -26,6 +26,7 @@ namespace GetOutside.Core.Model
         {
             IsTracking = false;
             IsPaused = false;
+            StartTime = DateTime.Now;
             Done = false;
             UserId = 1;
         }
