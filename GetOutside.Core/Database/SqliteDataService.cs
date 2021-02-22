@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using Android.App;
-using Android.Content;
-using Android.Widget;
 using GetOutside.Core.Model;
 using SQLite;
 

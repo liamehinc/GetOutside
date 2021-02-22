@@ -18,7 +18,7 @@
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
@@ -69,13 +69,13 @@
     <AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
     <AndroidSupportedAbis>
     </AndroidSupportedAbis>
-    <AndroidLinkTool>proguard</AndroidLinkTool>
     <AndroidEnableMultiDex>false</AndroidEnableMultiDex>
     <AndroidPackageFormat>aab</AndroidPackageFormat>
     <AndroidSigningKeyStore>C:\Users\william.thier\AppData\Local\Xamarin\Mono for Android\Keystore\getoutsideandroid\getoutsideandroid.keystore</AndroidSigningKeyStore>
     <AndroidSigningStorePass>L1eselViolet!</AndroidSigningStorePass>
     <AndroidSigningKeyAlias>getOutsideMobile</AndroidSigningKeyAlias>
     <AndroidSigningKeyPass>L1eselViolet!</AndroidSigningKeyPass>
+    <AndroidLinkTool>r8</AndroidLinkTool>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
